@@ -1,4 +1,4 @@
-package com.kiberone.app;
+package com.travel.hero;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

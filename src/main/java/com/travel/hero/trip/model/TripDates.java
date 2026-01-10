@@ -1,11 +1,10 @@
-package com.kiberone.app.model;
+package com.travel.hero.trip.model;
 
 import jakarta.persistence.Embeddable;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 import java.util.OptionalInt;
 
 @Embeddable

@@ -1,6 +1,7 @@
-package com.kiberone.app.model;
+package com.travel.hero.trip.model;
 
-import com.kiberone.app.enums.TripStatus;
+import com.travel.hero.trip.enumeration.TripStatus;
+import com.travel.hero.user.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

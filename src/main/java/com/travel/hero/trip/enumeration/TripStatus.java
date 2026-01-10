@@ -1,4 +1,4 @@
-package com.kiberone.app.enums;
+package com.travel.hero.trip.enumeration;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

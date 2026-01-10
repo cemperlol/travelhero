@@ -1,4 +1,4 @@
-package com.kiberone.app.controllers;
+package com.travel.hero.common.controller;
 
 import org.springframework.stereotype.Controller;
 
