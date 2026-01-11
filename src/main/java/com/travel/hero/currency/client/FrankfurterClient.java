@@ -2,6 +2,7 @@ package com.travel.hero.currency.client;
 
 import com.travel.hero.currency.dto.FrankfurterResponse;
 import com.travel.hero.currency.enumeration.CurrencyCode;
+import com.travel.hero.currency.exception.CurrencyConversionException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -47,6 +48,7 @@ public class FrankfurterClient {
 
     @Scheduled(cron = "0 0 * * * *")
     public void updateRates() {
-        fetchLatestRates(CurrencyCode.EUR, CurrencyCode.RUB, LocalDate.now());
+        fetchLatestRates(CurrencyCode.EUR, CurrencyCode.RUB, LocalDate.now())
+                .subscribe();
     }
 }
