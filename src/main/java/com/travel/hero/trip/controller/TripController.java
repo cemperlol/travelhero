@@ -13,10 +13,4 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Trips", description = "Controlling the Kanban Travel Board")
 public class TripController {
 
-    private final
-
-    @GetMapping("/")
-    public ResponseBody getAllTrips() {
-        return new ResponseBody();
-    }
 }

@@ -1,16 +1,17 @@
 package com.travel.hero.currency.service;
 
 import com.travel.hero.currency.client.FrankfurterClient;
+import com.travel.hero.currency.dto.CurrencyConversionResponse;
 import com.travel.hero.currency.dto.FrankfurterResponse;
 import com.travel.hero.currency.enumeration.CurrencyCode;
-import io.swagger.v3.oas.annotations.servers.ServerVariable;
+import com.travel.hero.currency.exception.CurrencyConversionException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,21 +20,26 @@ public class DefaultCurrencyConversionService implements CurrencyConversionServi
     private final FrankfurterClient frankfurterClient;
 
     @Override
-    @Cacheable(value = "currencyConversions",
-                key = "{#amount, #fromCurrency, #toCurrency}")
-    public BigDecimal convert(
+    public CurrencyConversionResponse convert (
             BigDecimal amount,
             CurrencyCode fromCurrency,
             CurrencyCode toCurrency
     ) {
         LocalDate utcDate = LocalDate.now(ZoneOffset.UTC);
 
-        FrankfurterResponse response = frankfurterClient
-                .fetchLatestRates(fromCurrency, toCurrency, utcDate)
-                .block();
+        FrankfurterResponse frankfurterResponse = frankfurterClient
+                .fetchLatestRates(fromCurrency, toCurrency, utcDate);
 
-        BigDecimal rate = response.getRates().get(toCurrency.name());
+        BigDecimal rate = Optional
+                .ofNullable(frankfurterResponse.getRates().get(toCurrency.name()))
+                .orElseThrow(() -> new CurrencyConversionException("Rate not found"));
 
-        return amount.multiply(rate);
+        CurrencyConversionResponse response = new CurrencyConversionResponse();
+        response.setAmount(amount.multiply(rate));
+        response.setFromCurrency(fromCurrency);
+        response.setToCurrency(toCurrency);
+        response.setDate(utcDate);
+
+        return response;
     }
 }

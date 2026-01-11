@@ -2,31 +2,25 @@ package com.travel.hero.currency.client;
 
 import com.travel.hero.currency.dto.FrankfurterResponse;
 import com.travel.hero.currency.enumeration.CurrencyCode;
-import org.springframework.scheduling.annotation.Scheduled;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class FrankfurterClient {
 
     private static final String BASE_URL = "https://api.frankfurter.app";
 
-    private final WebClient webClient;
+    private final RestClient restClient;
 
-    public FrankfurterClient() {
-        this.webClient = WebClient.builder()
-                .baseUrl(BASE_URL)
-                .defaultHeader("Accept", "application/json")
-                .build();
-    }
-
-    public Mono<FrankfurterResponse> fetchLatestRates(
+    @Cacheable(value = "currencyConversions",
+            key = "{#baseCurrency, #targetCurrency, #date}")
+    public FrankfurterResponse fetchLatestRates(
             CurrencyCode baseCurrency, 
             CurrencyCode targetCurrency,
             LocalDate date
@@ -35,18 +29,13 @@ public class FrankfurterClient {
             ? "/latest"
             : "/" + date;
 
-        return webClient.get()
+        return restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(endpoint)
                         .queryParam("from", baseCurrency.name())
                         .queryParam("to", targetCurrency.name())
                         .build())
                 .retrieve()
-                .bodyToMono(FrankfurterResponse.class);
-    }
-
-    @Scheduled(cron = "0 0 * * * *")
-    public void updateRates() {
-        fetchLatestRates(CurrencyCode.EUR, CurrencyCode.RUB, LocalDate.now());
+                .body(FrankfurterResponse.class);
     }
 }
