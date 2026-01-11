@@ -6,7 +6,6 @@ import com.travel.hero.currency.dto.FrankfurterResponse;
 import com.travel.hero.currency.enumeration.CurrencyCode;
 import com.travel.hero.currency.exception.CurrencyConversionException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,8 +20,6 @@ public class DefaultCurrencyConversionService implements CurrencyConversionServi
     private final FrankfurterClient frankfurterClient;
 
     @Override
-    @Cacheable(value = "currencyConversions",
-                key = "{#amount, #fromCurrency, #toCurrency}")
     public CurrencyConversionResponse convert (
             BigDecimal amount,
             CurrencyCode fromCurrency,
@@ -31,8 +28,7 @@ public class DefaultCurrencyConversionService implements CurrencyConversionServi
         LocalDate utcDate = LocalDate.now(ZoneOffset.UTC);
 
         FrankfurterResponse frankfurterResponse = frankfurterClient
-                .fetchLatestRates(fromCurrency, toCurrency, utcDate)
-                .block();
+                .fetchLatestRates(fromCurrency, toCurrency, utcDate);
 
         BigDecimal rate = Optional
                 .ofNullable(frankfurterResponse.getRates().get(toCurrency.name()))
@@ -42,6 +38,7 @@ public class DefaultCurrencyConversionService implements CurrencyConversionServi
         response.setAmount(amount.multiply(rate));
         response.setFromCurrency(fromCurrency);
         response.setToCurrency(toCurrency);
+        response.setDate(utcDate);
 
         return response;
     }

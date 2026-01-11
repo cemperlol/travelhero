@@ -5,13 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 public class CurrencyConversionResponse {
 
     private BigDecimal amount;
-    private String error = "no error";
     private CurrencyCode fromCurrency;
     private CurrencyCode toCurrency;
+    private LocalDate date;
 }

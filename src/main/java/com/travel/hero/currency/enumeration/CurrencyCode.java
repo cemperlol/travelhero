@@ -10,5 +10,5 @@ public enum CurrencyCode {
     EUR("Euro"),
     RUB("Russian Ruble");
 
-    private final String currencyName;
+    private final String currencyFullName;
 }
