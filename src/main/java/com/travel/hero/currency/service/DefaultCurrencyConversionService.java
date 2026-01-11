@@ -10,13 +10,18 @@ import java.time.LocalDate;
 @Service
 public class DefaultCurrencyConversionService implements CurrencyConversionService {
 
+    /*TODO:
+        implement API with Frunkfurter
+     */
     @Override
-    public BigDecimal convert(BigDecimal amount, CurrencyCode fromCurrency, CurrencyCode toCurrency, LocalDate date) {
+    public BigDecimal convert(
+            BigDecimal amount,
+            CurrencyCode fromCurrency,
+            CurrencyCode toCurrency,
+            LocalDate date
+    ) {
+
+
         return null;
-    }
-
-    @ExceptionHandler(Exception.class)
-    private void handle() {
-
     }
 }

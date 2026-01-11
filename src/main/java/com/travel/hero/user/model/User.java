@@ -1,14 +1,11 @@
 package com.travel.hero.user.model;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.travel.hero.currency.enumeration.CurrencyCode;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
-import java.util.Currency;
 import java.util.UUID;
 
 @Entity
