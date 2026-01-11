@@ -10,7 +10,6 @@ public interface CurrencyConversionService {
     BigDecimal convert(
             BigDecimal amount,
             CurrencyCode fromCurrency,
-            CurrencyCode toCurrency,
-            LocalDate date
+            CurrencyCode toCurrency
     );
 }

@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,22 +28,18 @@ public class FrankfurterClient {
 
     public Mono<FrankfurterResponse> fetchLatestRates(
             CurrencyCode baseCurrency, 
-            Set<CurrencyCode> targetCurrencies,
+            CurrencyCode targetCurrency,
             LocalDate date
     ) {
-        String endpoint = date.isEqual(LocalDate.now())
+        String endpoint = date.isEqual(LocalDate.now(ZoneOffset.UTC))
             ? "/latest"
             : "/" + date;
-
-        String targetCurrenciesAsString = targetCurrencies.stream()
-                .map(CurrencyCode::getCurrencyName)
-                .collect(Collectors.joining(","));
 
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(endpoint)
                         .queryParam("from", baseCurrency.name())
-                        .queryParam("to", targetCurrenciesAsString)
+                        .queryParam("to", targetCurrency.name())
                         .build())
                 .retrieve()
                 .bodyToMono(FrankfurterResponse.class);
@@ -50,6 +47,6 @@ public class FrankfurterClient {
 
     @Scheduled(cron = "0 0 * * * *")
     public void updateRates() {
-        fetchLatestRates(CurrencyCode.EUR, Set.of(CurrencyCode.RUB), LocalDate.now());
+        fetchLatestRates(CurrencyCode.EUR, CurrencyCode.RUB, LocalDate.now());
     }
 }
