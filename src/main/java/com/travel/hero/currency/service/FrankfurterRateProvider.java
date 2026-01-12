@@ -32,7 +32,7 @@ public class FrankfurterRateProvider implements CurrencyRateProvider {
     @Override
     public BigDecimal getRatesAtDate(CurrencyCode fromCurrency, CurrencyCode toCurrency, LocalDate date) {
         return Optional
-                .ofNullable(frankfurterClient.fetchLatestRates(
+                .ofNullable(frankfurterClient.fetchRatesAtDate(
                         fromCurrency,
                         toCurrency,
                         date
