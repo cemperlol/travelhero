@@ -8,11 +8,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 
 @Component
 @RequiredArgsConstructor
 public class FrankfurterClient {
+
+    private static final String BASE_URL = "https://api.frankfurter.dev/v1";
 
     private final RestClient restClient;
 
@@ -22,13 +23,13 @@ public class FrankfurterClient {
             CurrencyCode baseCurrency,
             CurrencyCode targetCurrency
     ) {
-        String endpoint = "/latest";
+        String endpoint = "/v1/latest";
 
         return restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(endpoint)
-                        .queryParam("from", baseCurrency.name())
-                        .queryParam("to", targetCurrency.name())
+                        .queryParam("base", baseCurrency.name())
+                        .queryParam("symbols", targetCurrency.name())
                         .build())
                 .retrieve()
                 .body(FrankfurterResponse.class);
@@ -41,13 +42,13 @@ public class FrankfurterClient {
             CurrencyCode targetCurrency,
             LocalDate date
     ) {
-        String endpoint = "/" + date;
+        String endpoint = "/v1/" + date;
 
         return restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(endpoint)
-                        .queryParam("from", baseCurrency.name())
-                        .queryParam("to", targetCurrency.name())
+                        .queryParam("base", baseCurrency.name())
+                        .queryParam("symbols", targetCurrency.name())
                         .build())
                 .retrieve()
                 .body(FrankfurterResponse.class);
