@@ -27,8 +27,8 @@ public class FrankfurterClient {
         return restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(endpoint)
-                        .queryParam("from", baseCurrency.name())
-                        .queryParam("to", targetCurrency.name())
+                        .queryParam("base", baseCurrency.name())
+                        .queryParam("symbols", targetCurrency.name())
                         .build())
                 .retrieve()
                 .body(FrankfurterResponse.class);
@@ -46,8 +46,8 @@ public class FrankfurterClient {
         return restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(endpoint)
-                        .queryParam("from", baseCurrency.name())
-                        .queryParam("to", targetCurrency.name())
+                        .queryParam("base", baseCurrency.name())
+                        .queryParam("symbols", targetCurrency.name())
                         .build())
                 .retrieve()
                 .body(FrankfurterResponse.class);
