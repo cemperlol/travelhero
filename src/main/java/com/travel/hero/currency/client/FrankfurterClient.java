@@ -14,20 +14,34 @@ import java.time.ZoneOffset;
 @RequiredArgsConstructor
 public class FrankfurterClient {
 
-    private static final String BASE_URL = "https://api.frankfurter.app";
-
     private final RestClient restClient;
 
-    @Cacheable(value = "currencyConversions",
-            key = "{#baseCurrency, #targetCurrency, #date}")
+    @Cacheable(value = "currencyRates",
+            key = "{#baseCurrency, #targetCurrency}")
     public FrankfurterResponse fetchLatestRates(
+            CurrencyCode baseCurrency,
+            CurrencyCode targetCurrency
+    ) {
+        String endpoint = "/latest";
+
+        return restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(endpoint)
+                        .queryParam("from", baseCurrency.name())
+                        .queryParam("to", targetCurrency.name())
+                        .build())
+                .retrieve()
+                .body(FrankfurterResponse.class);
+    }
+
+    @Cacheable(value = "currencyRates",
+            key = "{#baseCurrency, #targetCurrency, #date}")
+    public FrankfurterResponse fetchRatesAtDate(
             CurrencyCode baseCurrency, 
             CurrencyCode targetCurrency,
             LocalDate date
     ) {
-        String endpoint = date.isEqual(LocalDate.now(ZoneOffset.UTC))
-            ? "/latest"
-            : "/" + date;
+        String endpoint = "/" + date;
 
         return restClient.get()
                 .uri(uriBuilder -> uriBuilder
