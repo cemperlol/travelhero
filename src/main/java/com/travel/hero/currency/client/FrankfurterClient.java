@@ -13,8 +13,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class FrankfurterClient {
 
-    private static final String BASE_URL = "https://api.frankfurter.dev/v1";
-
     private final RestClient restClient;
 
     @Cacheable(value = "currencyRates",

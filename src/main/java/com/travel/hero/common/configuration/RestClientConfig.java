@@ -10,7 +10,7 @@ public class RestClientConfig {
     @Bean
     public RestClient frankfurterRestClient() {
         return RestClient.builder()
-                .baseUrl("https://api.frankfurter.app")
+                .baseUrl("https://api.frankfurter.app/v1")
                 .defaultHeader("Accept", "application/json")
                 .build();
     }

@@ -9,7 +9,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class Trip {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     private String description;
@@ -34,8 +37,9 @@ public class Trip {
     @Embedded
     private TripDates dates;
 
-    private Double budget;
+    private BigDecimal budget;
 
+    @Column(nullable = false)
     private String color = "#FFFFFF";
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -47,14 +51,17 @@ public class Trip {
     private List<Attachment> attachments = new ArrayList<>();
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt = LocalDateTime.now(ZoneOffset.UTC);
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now(ZoneOffset.UTC);
+
+    @Version
+    private Long version;
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     public Attachment addAttachment(
@@ -85,7 +92,7 @@ public class Trip {
             String name,
             String description,
             TripDates dates,
-            Double budget,
+            BigDecimal budget,
             String color,
             User user
     ) {
