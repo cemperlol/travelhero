@@ -1,10 +1,13 @@
 package com.travel.hero.trip.model;
 
+import com.travel.hero.attachment.enumeration.AttachmentType;
 import com.travel.hero.attachment.model.Attachment;
 import com.travel.hero.trip.enumeration.TripStatus;
 import com.travel.hero.user.model.User;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,12 +15,13 @@ import java.util.List;
 
 @Entity
 @Table(name = "trips")
-@Data
+@Getter
+@NoArgsConstructor(access =  AccessLevel.PROTECTED)
 public class Trip {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final Long id;
+    private Long id;
 
     private String name;
 
@@ -53,16 +57,47 @@ public class Trip {
         updatedAt = LocalDateTime.now();
     }
 
-    public void addAttachment(Attachment attachment) {
+    public Attachment addAttachment(
+            String filename,
+            String contentType,
+            Long size,
+            String storageKey,
+            AttachmentType type
+    ) {
+        Attachment attachment = Attachment.create(
+                this,
+                filename,
+                contentType,
+                size,
+                storageKey,
+                type
+        );
         attachments.add(attachment);
-        attachment.setTrip(this);
+
+        return attachment;
     }
 
     public void removeAttachment(Attachment attachment) {
         attachments.remove(attachment);
-        attachment.setTrip(null);
     }
 
+    public static Trip create(
+            String name,
+            String description,
+            TripDates dates,
+            Double budget,
+            String color,
+            User user
+    ) {
+        Trip trip = new Trip();
+        trip.name = name;
+        trip.description = description;
+        trip.dates = dates;
+        trip.budget = budget;
+        trip.color = color;
+        trip.user = user;
 
+        return trip;
+    }
 }
 
