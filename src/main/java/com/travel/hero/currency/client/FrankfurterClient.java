@@ -13,8 +13,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class FrankfurterClient {
 
-    private static final String BASE_URL = "https://api.frankfurter.dev/v1";
-
     private final RestClient restClient;
 
     @Cacheable(value = "currencyRates",
@@ -23,7 +21,7 @@ public class FrankfurterClient {
             CurrencyCode baseCurrency,
             CurrencyCode targetCurrency
     ) {
-        String endpoint = "/v1/latest";
+        String endpoint = "/latest";
 
         return restClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -42,7 +40,7 @@ public class FrankfurterClient {
             CurrencyCode targetCurrency,
             LocalDate date
     ) {
-        String endpoint = "/v1/" + date;
+        String endpoint = "/" + date;
 
         return restClient.get()
                 .uri(uriBuilder -> uriBuilder
