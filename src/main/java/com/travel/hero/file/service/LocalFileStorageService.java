@@ -2,6 +2,7 @@ package com.travel.hero.file.service;
 
 import com.travel.hero.file.dto.StoredFile;
 import com.travel.hero.file.exception.FileStorageException;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -37,8 +38,13 @@ public class LocalFileStorageService implements FileStorageService{
 
     @Override
     public InputStream load(String storageKey) {
+        Path path = root.resolve(storageKey);
+        if (!Files.exists(path)) {
+            throw new FileStorageException("File not found");
+        }
+
         try {
-            return Files.newInputStream(root.resolve(storageKey));
+            return Files.newInputStream(path);
         } catch (IOException e) {
             throw new FileStorageException(
                     "Failed to load file at: " + storageKey,
@@ -57,5 +63,10 @@ public class LocalFileStorageService implements FileStorageService{
                     e.getCause()
             );
         }
+    }
+
+    @PostConstruct
+    void init() throws IOException {
+        Files.createDirectories(root);
     }
 }
