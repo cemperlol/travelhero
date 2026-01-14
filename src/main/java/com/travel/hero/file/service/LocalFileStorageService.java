@@ -4,8 +4,8 @@ import com.travel.hero.file.dto.StoredFile;
 import com.travel.hero.file.exception.FileStorageException;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +18,7 @@ public class LocalFileStorageService implements FileStorageService{
 
     @Override
     public StoredFile store(
-            BufferedInputStream content,
+            InputStream content,
             String originalFilename,
             String contentType) {
         String key = UUID.randomUUID().toString();
@@ -27,18 +27,35 @@ public class LocalFileStorageService implements FileStorageService{
         try {
              size = Files.copy(content, root.resolve(key));
         } catch (IOException e) {
-            throw new FileStorageException("Failed to store file: " + originalFilename);
+            throw new FileStorageException(
+                    "Failed to store file: " + originalFilename,
+                    e.getCause()
+            );
         }
         return new StoredFile(key, size);
     }
 
     @Override
-    public BufferedInputStream load(String storageKey) {
-        return null;
+    public InputStream load(String storageKey) {
+        try {
+            return Files.newInputStream(root.resolve(storageKey));
+        } catch (IOException e) {
+            throw new FileStorageException(
+                    "Failed to load file at: " + storageKey,
+                    e.getCause()
+            );
+        }
     }
 
     @Override
     public void delete(String storageKey) {
-
+        try {
+            Files.deleteIfExists(root.resolve(storageKey));
+        } catch (IOException e) {
+            throw new FileStorageException(
+                    "Failed to delete file at: " + storageKey,
+                    e.getCause()
+            );
+        }
     }
 }
