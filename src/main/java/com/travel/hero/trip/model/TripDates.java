@@ -1,5 +1,6 @@
 package com.travel.hero.trip.model;
 
+import com.travel.hero.trip.exception.IncorrectTripDuration;
 import jakarta.persistence.Embeddable;
 import lombok.Data;
 
@@ -15,13 +16,15 @@ public class TripDates {
 
     private LocalDate endDate;
 
-    public OptionalInt getTripDuration() {
-        if (startDate == null
-                || endDate == null
-                || endDate.isBefore(startDate)) {
-            return OptionalInt.empty();
+    public int getTripDuration() {
+        if (startDate == null || endDate == null) {
+            throw new IncorrectTripDuration("Both dates must be set");
         }
 
-        return OptionalInt.of((int) ChronoUnit.DAYS.between(startDate, endDate) + 1);
+        if (endDate.isBefore(startDate)) {
+            throw new IncorrectTripDuration("End date cannot be before start date");
+        }
+
+        return (int) ChronoUnit.DAYS.between(startDate, endDate) + 1;
     }
 }

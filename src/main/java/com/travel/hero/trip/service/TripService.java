@@ -9,4 +9,9 @@ public interface TripService {
             Long tripId,
             User currentUser
     );
+
+    void deleteTrip(
+            Long tripId,
+            User currentUser
+    );
 }

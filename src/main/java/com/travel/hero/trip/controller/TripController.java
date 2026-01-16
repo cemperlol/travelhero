@@ -1,6 +1,6 @@
 package com.travel.hero.trip.controller;
 
-import com.travel.hero.trip.model.Trip;
+import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.service.TripService;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,9 +20,9 @@ public class TripController {
     private final TripService tripService;
 
     @GetMapping("/{id}")
-    ResponseEntity<Trip> getTrip(
+    ResponseEntity<TripResponse> getTrip(
             @PathVariable Long id,
             @AuthenticationPrincipal User currentUser) {
-        tripService.getTrip(id, currentUser);
+        return ResponseEntity.ok(tripService.getTrip(id, currentUser));
     }
 }
