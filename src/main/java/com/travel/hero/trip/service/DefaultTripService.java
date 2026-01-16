@@ -17,8 +17,7 @@ public class DefaultTripService implements TripService {
 
     @Override
     public TripResponse getTrip(Long tripId, User currentUser) {
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new TripNotFoundException("There is no trip with such id"));
+        Trip trip = findTrip(tripId);
 
         validateTripAccess(trip, currentUser);
 
@@ -31,12 +30,17 @@ public class DefaultTripService implements TripService {
                 .budget(trip.getBudget())
                 .createdAt(trip.getCreatedAt())
                 .updatedAt(trip.getUpdatedAt())
+                .version(trip.getVersion())
                 .build();
     }
 
     @Override
     public void deleteTrip(Long tripId, User currentUser) {
+        Trip trip = findTrip(tripId);
 
+        validateTripAccess(trip, currentUser);
+
+        tripRepository.deleteById(tripId);
     }
 
     private void validateTripAccess(Trip trip, User currentUser) {
@@ -46,5 +50,11 @@ public class DefaultTripService implements TripService {
                             currentUser.getUsername(), trip.getId())
             );
         }
+    }
+
+    private Trip findTrip(Long tripId) {
+        return tripRepository.findById(tripId)
+                .orElseThrow(() -> new TripNotFoundException(
+                        String.format("There is no trip with id %d", tripId)));
     }
 }

@@ -66,5 +66,12 @@ public record TripResponse(
                 requiredMode = Schema.RequiredMode.NOT_REQUIRED,
                 example = "2025-09-13 12:31:56"
         )
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+
+        @Schema(
+                description = "version for optimistic lock",
+                requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+                example = "1"
+        )
+        Long version
 ) {}
