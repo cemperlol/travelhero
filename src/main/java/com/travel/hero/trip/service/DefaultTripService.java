@@ -8,6 +8,7 @@ import com.travel.hero.trip.repository.TripRepository;
 import com.travel.hero.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,22 +17,13 @@ public class DefaultTripService implements TripService {
     private final TripRepository tripRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public TripResponse getTrip(Long tripId, User currentUser) {
         Trip trip = findTrip(tripId);
 
         validateTripAccess(trip, currentUser);
 
-        return TripResponse.builder()
-                .id(trip.getId())
-                .name(trip.getName())
-                .description(trip.getDescription())
-                .status(trip.getStatus())
-                .dates(trip.getDates())
-                .budget(trip.getBudget())
-                .createdAt(trip.getCreatedAt())
-                .updatedAt(trip.getUpdatedAt())
-                .version(trip.getVersion())
-                .build();
+        return mapToTripResponse(trip);
     }
 
     @Override
@@ -40,7 +32,7 @@ public class DefaultTripService implements TripService {
 
         validateTripAccess(trip, currentUser);
 
-        tripRepository.deleteById(tripId);
+        tripRepository.delete(trip);
     }
 
     private void validateTripAccess(Trip trip, User currentUser) {
@@ -56,5 +48,20 @@ public class DefaultTripService implements TripService {
         return tripRepository.findById(tripId)
                 .orElseThrow(() -> new TripNotFoundException(
                         String.format("There is no trip with id %d", tripId)));
+    }
+
+    private TripResponse mapToTripResponse(Trip trip) {
+        return TripResponse.builder()
+                .id(trip.getId())
+                .name(trip.getName())
+                .description(trip.getDescription())
+                .status(trip.getStatus())
+                .dates(trip.getDates())
+                .budget(trip.getBudget())
+                .color(trip.getColor())
+                .createdAt(trip.getCreatedAt())
+                .updatedAt(trip.getUpdatedAt())
+                .version(trip.getVersion())
+                .build();
     }
 }

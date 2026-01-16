@@ -55,6 +55,13 @@ public record TripResponse(
         BigDecimal budget,
 
         @Schema(
+                description = "Trip color",
+                requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+                example = "#FFFFFF"
+        )
+        String color,
+
+        @Schema(
                 description = "date and time of trip creation in UTC",
                 requiredMode = Schema.RequiredMode.NOT_REQUIRED,
                 example = "2025-09-12 18:56:31"
