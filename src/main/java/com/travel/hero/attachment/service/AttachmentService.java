@@ -6,4 +6,6 @@ import com.travel.hero.user.model.User;
 public interface AttachmentService {
 
     AttachmentContent get(Long attachmentId, User currentUser);
+
+    void delete(Long attachmentId, User currentUser);
 }

@@ -24,7 +24,7 @@ public class FrankfurterRateProvider implements CurrencyRateProvider {
                                         fromCurrency,
                                         toCurrency
                                 )
-                                .getRates()
+                                .rates()
                                 .get(toCurrency.name())
                 ).orElseThrow(() -> new CurrencyConversionException("Rate not found"));
     }
@@ -37,7 +37,7 @@ public class FrankfurterRateProvider implements CurrencyRateProvider {
                         toCurrency,
                         date
                 )
-                        .getRates()
+                        .rates()
                         .get(toCurrency.name())
                 ).orElseThrow(() -> new CurrencyConversionException("Rate not found"));
     }
