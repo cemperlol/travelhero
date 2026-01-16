@@ -41,4 +41,17 @@ public class DefaultAttachmentService implements AttachmentService {
                 attachment.getContentType()
         );
     }
+
+    @Override
+    @Transactional
+    public void delete(Long attachmentId, User currentUser) {
+        Attachment attachment = attachmentRepository.findById(attachmentId)
+                .orElseThrow(() -> new AttachmentNotFoundException("There is no such attachment"));
+
+        if (!attachment.getTrip().getUser().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("Access denied");
+        } else {
+            attachmentRepository.deleteById(attachmentId);
+        }
+    }
 }

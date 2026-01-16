@@ -29,12 +29,12 @@ import java.io.InputStream;
         description = "Working with attachments (files, documents, etc.)"
 )
 @RestController
-@RequestMapping("/attachments")
+@RequestMapping("/api/v1/attachments")
 @RequiredArgsConstructor
 public class AttachmentController {
 
     private final DefaultAttachmentService attachmentService;
-    private final MediaTypeFileExtensionResolver mediaTypeFileExtensionResolver;
+    private final MediaTypeFileExtensionResolver extensionResolver;
 
     @Operation(
             summary = "Get attachment content",

@@ -19,7 +19,7 @@ import java.math.BigDecimal;
         description = "Working with currency (USD, EUR, etc.)"
 )
 @RestController
-@RequestMapping("/currency")
+@RequestMapping("/api/v1/currency")
 @RequiredArgsConstructor
 public class CurrencyController {
 

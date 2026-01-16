@@ -1,9 +1,13 @@
 package com.travel.hero.trip.controller;
 
+import com.travel.hero.trip.model.Trip;
+import com.travel.hero.trip.service.TripService;
+import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(
         name = "Trips"
@@ -13,4 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TripController {
 
+    private final TripService tripService;
+
+    @GetMapping("/{id}")
+    ResponseEntity<Trip> getTrip(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User currentUser) {
+        tripService.getTrip(id, currentUser);
+    }
 }
