@@ -1,7 +1,7 @@
 package com.travel.hero.trip.service;
 
 import com.travel.hero.common.exception.AccessDeniedException;
-import com.travel.hero.trip.TripNotFoundException;
+import com.travel.hero.trip.exception.TripNotFoundException;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.model.Trip;
 import com.travel.hero.trip.repository.TripRepository;

@@ -1,4 +1,4 @@
-package com.travel.hero.trip;
+package com.travel.hero.trip.exception;
 
 public class TripNotFoundException extends RuntimeException {
     public TripNotFoundException(String message) {

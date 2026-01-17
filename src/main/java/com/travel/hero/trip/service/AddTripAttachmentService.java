@@ -4,7 +4,7 @@ import com.travel.hero.attachment.enumeration.AttachmentType;
 import com.travel.hero.file.dto.StoredFile;
 import com.travel.hero.file.exception.FileStorageException;
 import com.travel.hero.file.service.FileStorageService;
-import com.travel.hero.trip.TripNotFoundException;
+import com.travel.hero.trip.exception.TripNotFoundException;
 import com.travel.hero.trip.model.Trip;
 import com.travel.hero.trip.repository.TripRepository;
 import jakarta.transaction.Transactional;
