@@ -15,7 +15,7 @@ import java.util.UUID;
 @Service
 public class LocalFileStorageService implements FileStorageService{
 
-    private final Path root = Paths.get("/data/files");
+    private final Path root = Paths.get("data/files");
 
     @Override
     public StoredFile store(
