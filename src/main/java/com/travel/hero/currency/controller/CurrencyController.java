@@ -51,9 +51,14 @@ public class CurrencyController {
     @GetMapping("/exchange")
     public BigDecimal exchangeCurrency(
             @RequestParam BigDecimal amount,
-            @RequestParam CurrencyCode fromCurrency,
-            @RequestParam CurrencyCode toCurrency
+            @RequestParam String fromCurrency,
+            @RequestParam String toCurrency
     ) {
-        return currencyConversionService.convert(amount, fromCurrency, toCurrency);
+        CurrencyCode fromCurrencyCode = CurrencyCode.valueOf(fromCurrency);
+        CurrencyCode toCurrencyCode = CurrencyCode.valueOf(toCurrency);
+        BigDecimal res = currencyConversionService.convert(amount, fromCurrencyCode, toCurrencyCode);
+
+        System.err.println(res);
+        return res;
     }
 }
