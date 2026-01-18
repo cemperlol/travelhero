@@ -86,5 +86,41 @@ public class AttachmentController {
                 .body(resource);
     }
 
-    public void deleteContent()
+    @Operation(
+            summary = "Delete attachment content",
+            description = """
+                    Deletes content of the attachment.
+                    
+                    Requires authentication.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "File successfully deleted",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                            schema = @Schema(type = "string", format = "binary")
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User is not authenticated"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "No access to attachment"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Attachment not found"
+            )
+    })
+    @GetMapping("/{id}")
+    public void deleteAttachment(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        attachmentService.delete(id, currentUser);
+    }
 }

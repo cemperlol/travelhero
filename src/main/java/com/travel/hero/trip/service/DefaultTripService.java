@@ -61,7 +61,6 @@ public class DefaultTripService implements TripService {
                 .color(trip.getColor())
                 .createdAt(trip.getCreatedAt())
                 .updatedAt(trip.getUpdatedAt())
-                .version(trip.getVersion())
                 .build();
     }
 }

@@ -27,11 +27,7 @@ public class DefaultAttachmentService implements AttachmentService {
         Attachment attachment = attachmentRepository.findById(attachmentId)
                 .orElseThrow(() -> new AttachmentNotFoundException("There is no such attachment"));
 
-        Trip trip = attachment.getTrip();
-
-        if (!trip.getUser().getId().equals(currentUser.getId())) {
-            throw new AccessDeniedException("Access denied");
-        }
+        validateAttachmentAccess(attachment, currentUser);
 
         InputStream content = storageService.load(attachment.getStorageKey());
 
@@ -48,10 +44,14 @@ public class DefaultAttachmentService implements AttachmentService {
         Attachment attachment = attachmentRepository.findById(attachmentId)
                 .orElseThrow(() -> new AttachmentNotFoundException("There is no such attachment"));
 
+        validateAttachmentAccess(attachment, currentUser);
+
+        attachmentRepository.deleteById(attachmentId);
+    }
+
+    private void validateAttachmentAccess(Attachment attachment, User currentUser) {
         if (!attachment.getTrip().getUser().getId().equals(currentUser.getId())) {
             throw new AccessDeniedException("Access denied");
-        } else {
-            attachmentRepository.deleteById(attachmentId);
         }
     }
 }

@@ -58,6 +58,7 @@ public class TripController {
             )
     })
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     ResponseEntity<TripResponse> getTrip(
             @PathVariable Long id,
             @AuthenticationPrincipal User currentUser) {
