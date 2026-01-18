@@ -85,4 +85,6 @@ public class AttachmentController {
                 .contentType(MediaType.parseMediaType(content.contentType()))
                 .body(resource);
     }
+
+    public void deleteContent()
 }

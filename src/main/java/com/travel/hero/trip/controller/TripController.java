@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -63,8 +64,39 @@ public class TripController {
         return ResponseEntity.ok(tripService.getTrip(id, currentUser));
     }
 
+    @Operation(
+            summary = "Delete trip",
+            description = """
+                    Deletes trip.
+                    
+                    Requires authentication.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Trip successfully deleted",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                            schema = @Schema(type = "string", format = "binary")
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User is not authenticated"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "No access to trip"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Trip not found"
+            )
+    })
     @DeleteMapping("/{id}")
-    void deleteTrip(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTrip(
             @PathVariable Long id,
             @AuthenticationPrincipal User currentUser) {
         tripService.deleteTrip(id, currentUser);

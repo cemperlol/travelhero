@@ -1,6 +1,7 @@
 package com.travel.hero.trip.model;
 
 import com.travel.hero.trip.exception.IncorrectTripDuration;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Embeddable;
 import lombok.Data;
 
@@ -12,8 +13,16 @@ import java.util.OptionalInt;
 @Data
 public class TripDates {
 
+    @Schema(
+            description = "Start date of trip",
+            example = "2026-08-14"
+    )
     private LocalDate startDate;
 
+    @Schema(
+            description = "End date of trip",
+            example = "2026-08-21"
+    )
     private LocalDate endDate;
 
     public int getTripDuration() {
