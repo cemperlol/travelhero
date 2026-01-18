@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface UserService {
 
-    UserResponse getUser(UUID id);
+//    UserResponse getUser(UUID id);
 }
