@@ -7,7 +7,6 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.OptionalInt;
 
 @Embeddable
 @Data

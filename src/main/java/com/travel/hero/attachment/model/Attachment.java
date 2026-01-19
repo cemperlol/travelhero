@@ -41,7 +41,7 @@ public class Attachment {
     @Column(name = "uploaded_at")
     private LocalDateTime uploadedAt;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AttachmentType type;
 
