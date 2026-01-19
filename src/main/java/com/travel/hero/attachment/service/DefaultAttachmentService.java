@@ -4,7 +4,7 @@ import com.travel.hero.attachment.dto.AttachmentContent;
 import com.travel.hero.attachment.exception.AttachmentNotFoundException;
 import com.travel.hero.attachment.model.Attachment;
 import com.travel.hero.attachment.repository.AttachmentRepository;
-import com.travel.hero.common.exception.ResourceAccessDeniedException;
+import com.travel.hero.common.exception.AccessDeniedException;
 import com.travel.hero.file.service.FileStorageService;
 import com.travel.hero.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +50,7 @@ public class DefaultAttachmentService implements AttachmentService {
 
     private void validateAttachmentAccess(Attachment attachment, User currentUser) {
         if (!attachment.getTrip().getUser().getId().equals(currentUser.getId())) {
-            throw new ResourceAccessDeniedException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
     }
 }

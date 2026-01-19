@@ -1,5 +1,7 @@
 package com.travel.hero.common.exception.handler;
 
+import com.travel.hero.attachment.exception.AttachmentNotFoundException;
+import com.travel.hero.common.exception.AccessDeniedException;
 import com.travel.hero.currency.exception.CurrencyConversionException;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,28 @@ public class KanbanExceptionHandler {
         return ErrorResponse.create(
                 e,
                 HttpStatus.BAD_REQUEST,
-                "CURRENCY_NOT_SUPPORTED: " + e.getMessage()
+                e.getMessage()
         );
     }
+
+    @ExceptionHandler(AttachmentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAttachmentNotFound(AttachmentNotFoundException e) {
+        return ErrorResponse.create(
+                e,
+                HttpStatus.NOT_FOUND,
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAttachmentNotFound(AccessDeniedException e) {
+        return ErrorResponse.create(
+                e,
+                HttpStatus.FORBIDDEN,
+                e.getMessage()
+        );
+    }
+
 }

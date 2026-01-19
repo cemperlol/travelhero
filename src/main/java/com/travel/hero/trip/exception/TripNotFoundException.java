@@ -1,6 +1,8 @@
 package com.travel.hero.trip.exception;
 
-public class TripNotFoundException extends RuntimeException {
+import com.travel.hero.common.exception.BusinessException;
+
+public class TripNotFoundException extends BusinessException {
     public TripNotFoundException(String message) {
         super(message);
     }
