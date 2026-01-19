@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 @Order
-public class TravelKanbanExceptionHandler {
+public class KanbanExceptionHandler {
 
     @ExceptionHandler(CurrencyConversionException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
