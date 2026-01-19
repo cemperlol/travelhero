@@ -2,6 +2,7 @@ package com.travel.hero.trip.service;
 
 import com.travel.hero.attachment.enumeration.AttachmentType;
 import com.travel.hero.file.dto.StoredFile;
+import com.travel.hero.file.exception.FileReaderException;
 import com.travel.hero.file.exception.FileStorageException;
 import com.travel.hero.file.service.FileStorageService;
 import com.travel.hero.trip.exception.TripNotFoundException;
@@ -37,7 +38,7 @@ public class AddTripAttachmentService implements TripAttachmentService {
                     file.getOriginalFilename(),
                     file.getContentType());
         } catch (IOException e) {
-            throw new FileStorageException(
+            throw new FileReaderException(
                     "Failed to read uploaded file: " + file.getOriginalFilename(),
                     e.getCause()
             );
