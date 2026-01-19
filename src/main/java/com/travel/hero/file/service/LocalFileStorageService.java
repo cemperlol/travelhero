@@ -1,7 +1,7 @@
 package com.travel.hero.file.service;
 
 import com.travel.hero.file.dto.StoredFile;
-import com.travel.hero.file.exception.FileStorageException;
+import com.travel.hero.file.exception.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ public class LocalFileStorageService implements FileStorageService{
         try {
              size = Files.copy(content, root.resolve(key));
         } catch (IOException e) {
-            throw new FileStorageException(
+            throw new FileWriterException(
                     "Failed to store file: " + originalFilename,
                     e.getCause()
             );
@@ -40,13 +40,13 @@ public class LocalFileStorageService implements FileStorageService{
     public InputStream load(String storageKey) {
         Path path = root.resolve(storageKey);
         if (!Files.exists(path)) {
-            throw new FileStorageException("File not found");
+            throw new FileNotFoundException("File not found");
         }
 
         try {
             return Files.newInputStream(path);
         } catch (IOException e) {
-            throw new FileStorageException(
+            throw new FileReaderException(
                     "Failed to load file at: " + storageKey,
                     e.getCause()
             );
@@ -58,7 +58,7 @@ public class LocalFileStorageService implements FileStorageService{
         try {
             Files.deleteIfExists(root.resolve(storageKey));
         } catch (IOException e) {
-            throw new FileStorageException(
+            throw new FileNotFoundException(
                     "Failed to delete file at: " + storageKey,
                     e.getCause()
             );

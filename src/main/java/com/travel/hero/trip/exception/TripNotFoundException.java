@@ -1,10 +1,8 @@
 package com.travel.hero.trip.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.travel.hero.common.exception.BusinessException;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class TripNotFoundException extends RuntimeException {
+public class TripNotFoundException extends BusinessException {
     public TripNotFoundException(String message) {
         super(message);
     }

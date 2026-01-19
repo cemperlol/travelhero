@@ -1,6 +1,6 @@
 package com.travel.hero.common.exception;
 
-public class AccessDeniedException extends RuntimeException {
+public class AccessDeniedException extends BusinessException {
 
     public AccessDeniedException(String message) {
         super(message);

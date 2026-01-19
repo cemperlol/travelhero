@@ -15,7 +15,7 @@ public class User {
 
     @Id
     @UuidGenerator(style = UuidGenerator.Style.TIME)
-    @Column(updatable = false, nullable = false, unique = true)
+    @Column(updatable = false, nullable = false)
     private UUID id;
 
     @Column(unique = true, nullable = false)
@@ -36,3 +36,5 @@ public class User {
     @Column(nullable = false)
     private CurrencyCode currencyCode = CurrencyCode.USD;
 }
+
+

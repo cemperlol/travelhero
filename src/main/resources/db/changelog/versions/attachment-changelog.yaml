@@ -1,0 +1,75 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: root
+      changes:
+        - createTable:
+            tableName: attachments
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: filename
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_path
+                  type: varchar(500)
+              - column:
+                  name: content_type
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_extension
+                  type: varchar(20)
+              - column:
+                  name: size
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: storage_key
+                  type: varchar(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: uploaded_at
+                  type: timestamp
+              - column:
+                  name: type
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: trip_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_attachments_trip_id
+                    references: trips(id)
+        - createIndex:
+            indexName: idx_attachments_trip_id
+            tableName: attachments
+            columns:
+              - column:
+                  name: trip_id
+        - createIndex:
+            indexName: idx_attachments_type
+            tableName: attachments
+            columns:
+              - column:
+                  name: type
+        - createIndex:
+            indexName: idx_attachments_uploaded_at
+            tableName: attachments
+            columns:
+              - column:
+                  name: uploaded_at
+                  descending: true

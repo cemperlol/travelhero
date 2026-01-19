@@ -6,7 +6,6 @@ import com.travel.hero.attachment.model.Attachment;
 import com.travel.hero.attachment.repository.AttachmentRepository;
 import com.travel.hero.common.exception.AccessDeniedException;
 import com.travel.hero.file.service.FileStorageService;
-import com.travel.hero.trip.model.Trip;
 import com.travel.hero.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

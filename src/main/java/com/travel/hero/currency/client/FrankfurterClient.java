@@ -24,10 +24,10 @@ public class FrankfurterClient {
         String endpoint = "/latest";
 
         return restClient.get()
-                .uri(uriBuilder -> uriBuilder
+                .uri(uriBuilder ->  uriBuilder
                         .path(endpoint)
-                        .queryParam("base", baseCurrency.name())
-                        .queryParam("symbols", targetCurrency.name())
+                        .queryParam("from", baseCurrency.name())
+                        .queryParam("to", targetCurrency.name())
                         .build())
                 .retrieve()
                 .body(FrankfurterResponse.class);
@@ -43,10 +43,10 @@ public class FrankfurterClient {
         String endpoint = "/" + date;
 
         return restClient.get()
-                .uri(uriBuilder -> uriBuilder
+                .uri(uriBuilder ->  uriBuilder
                         .path(endpoint)
-                        .queryParam("base", baseCurrency.name())
-                        .queryParam("symbols", targetCurrency.name())
+                        .queryParam("from", baseCurrency.name())
+                        .queryParam("to", targetCurrency.name())
                         .build())
                 .retrieve()
                 .body(FrankfurterResponse.class);

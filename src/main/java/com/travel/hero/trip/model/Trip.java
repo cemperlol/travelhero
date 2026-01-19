@@ -5,6 +5,8 @@ import com.travel.hero.attachment.model.Attachment;
 import com.travel.hero.trip.enumeration.TripStatus;
 import com.travel.hero.user.model.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,10 +42,12 @@ public class Trip {
     private BigDecimal budget;
 
     @Column(nullable = false)
+    @Pattern(regexp = "^#[0-9a-fA-F]{6}$")
     private String color = "#FFFFFF";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @NotNull
     private User user;
 
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
