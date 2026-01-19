@@ -41,16 +41,6 @@ public class KanbanExceptionHandler {
         );
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleAttachmentNotFound(AccessDeniedException e) {
-        return ErrorResponse.create(
-                e,
-                HttpStatus.FORBIDDEN,
-                e.getMessage()
-        );
-    }
-
     @ExceptionHandler(CurrencyConversionException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleCurrencyConversionError(CurrencyConversionException e) {

@@ -42,7 +42,6 @@ databaseChangeLog:
               - column:
                   name: uploaded_at
                   type: timestamp
-                  defaultValue: CURRENT_TIMESTAMP
               - column:
                   name: type
                   type: varchar(20)

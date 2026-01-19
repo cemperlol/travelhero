@@ -60,15 +60,8 @@ databaseChangeLog:
               - column:
                   name: version
                   type: bigint
-                  defaultValueNumeric: 0
-        - addCheckConstraint:
-            tableName: trips
-            constraintName: chk_trip_dates_valid
-            constraintBody: "end_date >= start_date"
-        - addCheckConstraint:
-            tableName: trips
-            constraintName: chk_trip_color_format
-            constraintBody: "color LIKE '#______'"
+                  defaultValueNumeric: '0'
+
         - createIndex:
             indexName: idx_trips_user_id
             tableName: trips
