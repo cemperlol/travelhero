@@ -1,6 +1,8 @@
 package com.travel.hero.attachment.exception;
 
-public class AttachmentNotFoundException extends RuntimeException {
+import com.travel.hero.common.exception.BusinessException;
+
+public class AttachmentNotFoundException extends BusinessException {
 
     public AttachmentNotFoundException(String message) {
         super(message);

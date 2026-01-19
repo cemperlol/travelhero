@@ -1,6 +1,9 @@
 package com.travel.hero.file.exception;
 
-public class FileStorageException extends RuntimeException {
+import com.travel.hero.common.exception.BusinessException;
+
+public class FileStorageException extends BusinessException {
+
     public FileStorageException(String message) {
         super(message);
     }

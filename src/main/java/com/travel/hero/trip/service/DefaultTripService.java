@@ -1,6 +1,6 @@
 package com.travel.hero.trip.service;
 
-import com.travel.hero.common.exception.AccessDeniedException;
+import com.travel.hero.common.exception.ResourceAccessDeniedException;
 import com.travel.hero.trip.exception.TripNotFoundException;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.model.Trip;
@@ -37,7 +37,7 @@ public class DefaultTripService implements TripService {
 
     private void validateTripAccess(Trip trip, User currentUser) {
         if (!trip.getUser().getId().equals(currentUser.getId())) {
-            throw new AccessDeniedException(
+            throw new ResourceAccessDeniedException(
                     String.format("User '%s' has no access to trip %d",
                             currentUser.getUsername(), trip.getId())
             );

@@ -1,10 +1,8 @@
 package com.travel.hero.currency.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.travel.hero.common.exception.BusinessException;
 
-@ResponseStatus(HttpStatus.BAD_GATEWAY)
-public class CurrencyConversionException extends RuntimeException {
+public class CurrencyConversionException extends BusinessException {
 
     public CurrencyConversionException(String message) {
         super(message);
