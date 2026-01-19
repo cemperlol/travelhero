@@ -58,7 +58,7 @@ public class LocalFileStorageService implements FileStorageService{
         try {
             Files.deleteIfExists(root.resolve(storageKey));
         } catch (IOException e) {
-            throw new FileDeletionException(
+            throw new FileNotFoundException(
                     "Failed to delete file at: " + storageKey,
                     e.getCause()
             );
