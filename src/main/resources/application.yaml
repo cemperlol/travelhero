@@ -19,3 +19,7 @@ spring:
 file:
   storage:
     enabled: true
+
+logging:
+  file:
+    name: app.log
