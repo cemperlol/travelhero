@@ -38,7 +38,7 @@ public class ServiceLoggingAspect {
             long duration = System.currentTimeMillis() - start;
 
             log.info(
-                    "<-{}.{}() finished in {} ms",
+                    "<-   {}.{}() finished in {} ms",
                     className,
                     methodName,
                     duration
@@ -50,7 +50,7 @@ public class ServiceLoggingAspect {
             long duration = System.currentTimeMillis() - start;
 
             log.error(
-                    "<*> {}.{}() failed after {} ms",
+                    "<*>   {}.{}() failed after {} ms",
                     className,
                     methodName,
                     duration,
