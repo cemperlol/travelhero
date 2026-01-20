@@ -12,9 +12,9 @@ import java.util.Arrays;
 @Slf4j
 @Aspect
 @Component
-public class LoggingAspect {
+public class ServiceLoggingAspect {
 
-    @Pointcut("execution(* com.travel.hero..service..*(..))")
+    @Pointcut("within(@org.springframework.stereotype.Service *)")
     public void serviceLayer() {}
 
     @Around("serviceLayer()")
@@ -25,7 +25,8 @@ public class LoggingAspect {
         String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
         String methodName = joinPoint.getSignature().getName();
 
-        log.info("->️  {}.{}() called with args: {}",
+        log.info(
+                "->️  {}.{}() called with args: {}",
                 className,
                 methodName,
                 Arrays.toString(joinPoint.getArgs())
@@ -36,7 +37,8 @@ public class LoggingAspect {
 
             long duration = System.currentTimeMillis() - start;
 
-            log.info("<-  {}.{}() finished in {} ms",
+            log.info(
+                    "<-{}.{}() finished in {} ms",
                     className,
                     methodName,
                     duration
@@ -47,7 +49,8 @@ public class LoggingAspect {
         } catch (Throwable e) {
             long duration = System.currentTimeMillis() - start;
 
-            log.error("<*> {}.{}() failed after {} ms",
+            log.error(
+                    "<*> {}.{}() failed after {} ms",
                     className,
                     methodName,
                     duration,
