@@ -31,7 +31,7 @@ public class ControllerLoggingAspect {
         String methodName = joinPoint.getSignature().getName();
 
         log.info(
-                "->{} {}.{}() called with args: {}",
+                "->   {} {}.{}() called with args: {}",
                 request.getMethod(),
                 className,
                 methodName,
@@ -45,7 +45,7 @@ public class ControllerLoggingAspect {
             ResponseEntity<?> response = (ResponseEntity<?>) result;
 
             log.info(
-                    "<-{} {}.{}() — Status: {}, Time: {}",
+                    "<-   {} {}.{}() — Status: {}, Time: {}",
                     request.getMethod(),
                     className,
                     methodName,
@@ -58,7 +58,7 @@ public class ControllerLoggingAspect {
             long duration = System.currentTimeMillis() - start;
 
             log.info(
-                    "<*>{} {}.{}() — Status: {}, Time: {}",
+                    "<*>   {} {}.{}() — Status: {}, Time: {}",
                     request.getMethod(),
                     className,
                     methodName,
