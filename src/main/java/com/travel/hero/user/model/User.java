@@ -2,7 +2,7 @@ package com.travel.hero.user.model;
 
 import com.travel.hero.currency.enumeration.CurrencyCode;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
@@ -10,7 +10,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-@Data
+@NoArgsConstructor(access =  AccessLevel.PROTECTED)
+@Getter @Setter
 public class User {
 
     @Id
@@ -35,6 +36,19 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CurrencyCode currencyCode = CurrencyCode.USD;
+
+    public static User create(
+            String email,
+            String password,
+            String username
+    ) {
+        User user = new User();
+        user.email = email;
+        user.password = password;
+        user.username = username;
+
+        return user;
+    }
 }
 
 

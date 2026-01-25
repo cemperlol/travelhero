@@ -35,7 +35,7 @@ public class DefaultTripService implements TripService {
                 user
         );
 
-        tripRepository.save(trip);
+        trip = tripRepository.save(trip);
 
         return mapToTripResponse(trip);
     }
