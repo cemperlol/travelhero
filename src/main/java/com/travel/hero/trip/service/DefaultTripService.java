@@ -6,6 +6,7 @@ import com.travel.hero.trip.exception.IncorrectTripDuration;
 import com.travel.hero.trip.exception.TripNotFoundException;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.model.Trip;
+import com.travel.hero.trip.model.TripDates;
 import com.travel.hero.trip.repository.TripRepository;
 import com.travel.hero.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,18 @@ public class DefaultTripService implements TripService {
             throw new IncorrectTripDuration("End date must be after start date");
         }
 
-        Trip trip = new Trip();
+        Trip trip = Trip.create(
+                request.name(),
+                request.description(),
+                new TripDates(request.startDate(), request.endDate()),
+                request.budget(),
+                request.color(),
+                user
+        );
 
-        return ;
+        tripRepository.save(trip);
+
+        return mapToTripResponse(trip);
     }
 
     @Override
