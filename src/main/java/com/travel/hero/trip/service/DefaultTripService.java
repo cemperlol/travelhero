@@ -1,6 +1,8 @@
 package com.travel.hero.trip.service;
 
 import com.travel.hero.common.exception.AccessDeniedException;
+import com.travel.hero.trip.dto.CreateTripRequest;
+import com.travel.hero.trip.exception.IncorrectTripDuration;
 import com.travel.hero.trip.exception.TripNotFoundException;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.model.Trip;
@@ -17,8 +19,20 @@ public class DefaultTripService implements TripService {
     private final TripRepository tripRepository;
 
     @Override
+    @Transactional
+    public TripResponse create(CreateTripRequest request, User user) {
+        if (request.endDate().isBefore(request.startDate())) {
+            throw new IncorrectTripDuration("End date must be after start date");
+        }
+
+        Trip trip = new Trip();
+
+        return ;
+    }
+
+    @Override
     @Transactional(readOnly = true)
-    public TripResponse getTrip(Long tripId, User currentUser) {
+    public TripResponse get(Long tripId, User currentUser) {
         Trip trip = findTrip(tripId);
 
         validateTripAccess(trip, currentUser);
@@ -27,7 +41,7 @@ public class DefaultTripService implements TripService {
     }
 
     @Override
-    public void deleteTrip(Long tripId, User currentUser) {
+    public void delete(Long tripId, User currentUser) {
         Trip trip = findTrip(tripId);
 
         validateTripAccess(trip, currentUser);
