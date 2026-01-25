@@ -71,7 +71,8 @@ public class DefaultTripService implements TripService {
     private Trip findTrip(Long tripId) {
         return tripRepository.findById(tripId)
                 .orElseThrow(() -> new TripNotFoundException(
-                        String.format("There is no trip with id %d", tripId)));
+                        String.format("There is no trip with id %d", tripId)
+                ));
     }
 
     private TripResponse mapToTripResponse(Trip trip) {

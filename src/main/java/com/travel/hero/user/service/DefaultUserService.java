@@ -3,6 +3,7 @@ package com.travel.hero.user.service;
 import com.travel.hero.currency.enumeration.CurrencyCode;
 import com.travel.hero.user.dto.CreateUserRequest;
 import com.travel.hero.user.dto.UserResponse;
+import com.travel.hero.user.exception.UserNotFoundException;
 import com.travel.hero.user.model.User;
 import com.travel.hero.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +32,20 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserResponse get(UUID uuid) {
-        return ;
+        return mapToUserResponse(findUser(uuid));
     }
 
     @Override
     public void delete(UUID uuid) {
 
+    }
+
+    private User findUser(UUID uuid) {
+        return userRepository.findById(uuid)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                String.format("There is no user with uuid %s", uuid)
+                        ));
     }
 
     private UserResponse mapToUserResponse(User user) {
