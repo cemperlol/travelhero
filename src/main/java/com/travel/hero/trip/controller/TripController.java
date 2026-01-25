@@ -1,5 +1,6 @@
 package com.travel.hero.trip.controller;
 
+import com.travel.hero.trip.dto.CreateTripRequest;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.service.TripService;
 import com.travel.hero.user.model.User;
@@ -9,12 +10,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @Tag(
         name = "Trips",
@@ -26,6 +30,15 @@ import org.springframework.web.bind.annotation.*;
 public class TripController {
 
     private final TripService tripService;
+
+    @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<TripResponse> createTrip(
+            @Valid @RequestBody CreateTripRequest request,
+            @AuthenticationPrincipal User currentUser
+            ) {
+        return ResponseEntity.ok(tripService.create(request, currentUser));
+    }
 
     @Operation(
             summary = "Get trip",
@@ -62,7 +75,7 @@ public class TripController {
     ResponseEntity<TripResponse> getTrip(
             @PathVariable Long id,
             @AuthenticationPrincipal User currentUser) {
-        return ResponseEntity.ok(tripService.getTrip(id, currentUser));
+        return ResponseEntity.ok(tripService.get(id, currentUser));
     }
 
     @Operation(
@@ -100,6 +113,6 @@ public class TripController {
     public void deleteTrip(
             @PathVariable Long id,
             @AuthenticationPrincipal User currentUser) {
-        tripService.deleteTrip(id, currentUser);
+        tripService.delete(id, currentUser);
     }
 }

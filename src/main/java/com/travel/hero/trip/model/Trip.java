@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "trips")
-@Getter
+@Getter @Setter
 @NoArgsConstructor(access =  AccessLevel.PROTECTED)
 public class Trip {
 
