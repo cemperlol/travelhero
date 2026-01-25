@@ -1,6 +1,5 @@
 package com.travel.hero.user.service;
 
-import com.travel.hero.currency.enumeration.CurrencyCode;
 import com.travel.hero.user.dto.CreateUserRequest;
 import com.travel.hero.user.dto.UserResponse;
 import com.travel.hero.user.exception.UserNotFoundException;
@@ -37,7 +36,7 @@ public class DefaultUserService implements UserService {
 
     @Override
     public void delete(UUID uuid) {
-
+        userRepository.delete(findUser(uuid));
     }
 
     private User findUser(UUID uuid) {
