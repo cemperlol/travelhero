@@ -31,6 +31,24 @@ public class TripController {
 
     private final TripService tripService;
 
+    @Operation(
+            summary = "Post trip",
+            description = """
+                    Posts and returns trip
+                    
+                    Requires authentication
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Trip successfully created"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User is not authenticated"
+            )
+    })
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<TripResponse> createTrip(
