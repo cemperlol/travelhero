@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.UUID;
@@ -46,7 +47,13 @@ public class UserController {
             @RequestBody CreateUserRequest request
     ) {
         UserResponse response = userService.create(request);
-        return ResponseEntity.created(URI.create("api/v1/users/" + response.uuid())).body(response);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{uuid}")
+                .buildAndExpand(response.uuid())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
     }
 
     @Operation(

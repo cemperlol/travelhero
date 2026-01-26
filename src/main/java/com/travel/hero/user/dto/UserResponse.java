@@ -7,6 +7,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Schema(description = "User general information")
 @Builder
 public record UserResponse(
 

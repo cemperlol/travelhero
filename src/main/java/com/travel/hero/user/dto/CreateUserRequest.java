@@ -2,6 +2,7 @@ package com.travel.hero.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "User creation information")
 public record CreateUserRequest(
 
         @Schema(

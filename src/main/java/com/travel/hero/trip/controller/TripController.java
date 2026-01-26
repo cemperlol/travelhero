@@ -3,6 +3,7 @@ package com.travel.hero.trip.controller;
 import com.travel.hero.trip.dto.CreateTripRequest;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.service.TripService;
+import com.travel.hero.user.dto.UserResponse;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
@@ -60,7 +62,13 @@ public class TripController {
             @AuthenticationPrincipal User currentUser
             ) {
         TripResponse response = tripService.create(request, currentUser);
-        return ResponseEntity.created(URI.create("/api/v1/trips/" + response.id())).body(response);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
     }
 
     @Operation(
