@@ -55,8 +55,7 @@ public class TripController {
                     description = "User is not authenticated"
             )
     })
-    @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
     public ResponseEntity<TripResponse> createTrip(
             @Valid @RequestBody CreateTripRequest request,
             @AuthenticationPrincipal User currentUser
@@ -102,7 +101,6 @@ public class TripController {
             )
     })
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     ResponseEntity<TripResponse> getTrip(
             @PathVariable Long id,
             @AuthenticationPrincipal User currentUser) {

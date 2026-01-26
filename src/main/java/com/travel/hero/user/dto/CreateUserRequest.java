@@ -18,10 +18,10 @@ public record CreateUserRequest(
 
         @Schema(
                 description = "User unique username",
-                example = "SomePassword111"
+                example = "SomePassword111",
+                accessMode = Schema.AccessMode.WRITE_ONLY
         )
         @NotBlank @Size(min = 8, max = 32)
-        @Pattern(regexp = "^[A-Za-z0-9!#$]{8,32}$")
         String password,
 
         @Schema(
@@ -29,6 +29,5 @@ public record CreateUserRequest(
                 example = "someusername111"
         )
         @NotBlank @Size(min = 3, max = 32)
-        @Pattern(regexp = "^[A-Za-z0-9_]{3,32}$")
         String username
 ) { }

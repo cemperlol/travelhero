@@ -42,8 +42,7 @@ public class UserController {
                     description = "Invalid user data"
             )
     })
-    @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
     public ResponseEntity<UserResponse> createUser(
             @Valid @RequestBody CreateUserRequest request
     ) {
@@ -72,7 +71,6 @@ public class UserController {
             )
     })
     @GetMapping("/{uuid}")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<UserResponse> getUser(
             @PathVariable UUID uuid
     ) {

@@ -28,13 +28,14 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
     @Column(name = "last_login_at")
-    private LocalDateTime lastLoginAt = LocalDateTime.now();
+    private LocalDateTime lastLoginAt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -56,13 +57,14 @@ public class User {
 
     public static User create(
             String email,
-            String password,
+            String encodedPassword,
             String username
     ) {
         User user = new User();
         user.email = email;
-        user.password = password;
+        user.password = encodedPassword;
         user.username = username;
+        user.lastLoginAt = null;
 
         return user;
     }
