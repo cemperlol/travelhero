@@ -45,6 +45,10 @@ public class TripController {
                     description = "Trip successfully created"
             ),
             @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid trip data"
+            ),
+            @ApiResponse(
                     responseCode = "401",
                     description = "User is not authenticated"
             )
@@ -55,7 +59,8 @@ public class TripController {
             @Valid @RequestBody CreateTripRequest request,
             @AuthenticationPrincipal User currentUser
             ) {
-        return ResponseEntity.ok(tripService.create(request, currentUser));
+        TripResponse response = tripService.create(request, currentUser);
+        return ResponseEntity.created(URI.create("/api/v1/trips/" + response.id())).body(response);
     }
 
     @Operation(

@@ -6,13 +6,19 @@ import com.travel.hero.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.UUID;
 
+@Tag(
+        name = "Users",
+        description = "Working with users"
+)
 @RestController
 @RequestMapping("api/v1/users")
 @RequiredArgsConstructor
@@ -29,13 +35,18 @@ public class UserController {
                     responseCode = "201",
                     description = "User successfully created"
             ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid user data"
+            )
     })
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserResponse> createUser(
             @RequestBody CreateUserRequest request
     ) {
-        return ResponseEntity.ok(userService.create(request));
+        UserResponse response = userService.create(request);
+        return ResponseEntity.created(URI.create("api/v1/users/" + response.uuid())).body(response);
     }
 
     @Operation(
@@ -44,7 +55,7 @@ public class UserController {
     )
     @ApiResponses({
             @ApiResponse(
-                    responseCode = "201",
+                    responseCode = "200",
                     description = "User successfully received"
             ),
             @ApiResponse(
