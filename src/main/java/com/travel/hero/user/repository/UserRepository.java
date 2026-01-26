@@ -13,11 +13,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    boolean existsByEmail(@NotBlank @Email String email);
+    boolean existsByEmail(String email);
 
-    boolean existsByUsername(
-            @NotBlank @Size(min = 3, max = 32)
-            @Pattern(regexp = "^[A-Za-z0-9_]{3,32}$")
-            String username
-    );
+    boolean existsByUsername(String username);
 }

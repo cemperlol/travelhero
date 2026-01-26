@@ -8,6 +8,7 @@ import com.travel.hero.user.exception.UsernameAlreadyExistsException;
 import com.travel.hero.user.model.User;
 import com.travel.hero.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -17,20 +18,20 @@ import java.util.UUID;
 public class DefaultUserService implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponse create(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyExistsException("Email already registered");
         }
-
         if (userRepository.existsByUsername(request.username())) {
             throw new UsernameAlreadyExistsException("Username already registered");
         }
 
         User user = User.create(
                 request.email(),
-                request.password(),
+                passwordEncoder.encode(request.password()),
                 request.username()
         );
 
@@ -64,6 +65,7 @@ public class DefaultUserService implements UserService {
                 .username(user.getUsername())
                 .createdAt(user.getCreatedAt())
                 .lastLoginAt(user.getLastLoginAt())
+                .currencyCode(user.getCurrencyCode())
                 .build();
     }
 }
