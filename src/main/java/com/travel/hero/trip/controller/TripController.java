@@ -3,6 +3,7 @@ package com.travel.hero.trip.controller;
 import com.travel.hero.trip.dto.CreateTripRequest;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.service.TripService;
+import com.travel.hero.user.dto.UserResponse;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
@@ -31,13 +33,41 @@ public class TripController {
 
     private final TripService tripService;
 
-    @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+            summary = "Post trip",
+            description = """
+                    Posts and returns trip
+                    
+                    Requires authentication
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Trip successfully created"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid trip data"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User is not authenticated"
+            )
+    })
+    @PostMapping
     public ResponseEntity<TripResponse> createTrip(
             @Valid @RequestBody CreateTripRequest request,
             @AuthenticationPrincipal User currentUser
             ) {
-        return ResponseEntity.ok(tripService.create(request, currentUser));
+        TripResponse response = tripService.create(request, currentUser);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
     }
 
     @Operation(
@@ -71,7 +101,6 @@ public class TripController {
             )
     })
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     ResponseEntity<TripResponse> getTrip(
             @PathVariable Long id,
             @AuthenticationPrincipal User currentUser) {
