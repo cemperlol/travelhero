@@ -37,7 +37,7 @@ public class UserController {
                     responseCode = "201",
                     description = "User successfully created"
             ),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "400",
                     description = "Invalid user data"
             )
