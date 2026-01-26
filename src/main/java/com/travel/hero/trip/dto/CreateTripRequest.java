@@ -1,6 +1,8 @@
 package com.travel.hero.trip.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,6 +14,7 @@ public record CreateTripRequest(
                 description = "Trip name",
                 example = "Trip to Germany."
         )
+        @NotBlank
         String name,
 
         @Schema(
@@ -43,5 +46,7 @@ public record CreateTripRequest(
                 example = "#FFFFFF",
                 pattern = "^#([A-Fa-f0-9]{6})$"
         )
+        @NotBlank
+        @Pattern(regexp = "^#([A-Fa-f0-9]{6})$")
         String color
 ) { }

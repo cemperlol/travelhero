@@ -2,7 +2,9 @@ package com.travel.hero.user.service;
 
 import com.travel.hero.user.dto.CreateUserRequest;
 import com.travel.hero.user.dto.UserResponse;
+import com.travel.hero.user.exception.EmailAlreadyExistsException;
 import com.travel.hero.user.exception.UserNotFoundException;
+import com.travel.hero.user.exception.UsernameAlreadyExistsException;
 import com.travel.hero.user.model.User;
 import com.travel.hero.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,14 @@ public class DefaultUserService implements UserService {
 
     @Override
     public UserResponse create(CreateUserRequest request) {
+        if (userRepository.existsByEmail(request.email())) {
+            throw new EmailAlreadyExistsException("Email already registered");
+        }
+
+        if (userRepository.existsByUsername(request.username())) {
+            throw new UsernameAlreadyExistsException("Username already registered");
+        }
+
         User user = User.create(
                 request.email(),
                 request.password(),
