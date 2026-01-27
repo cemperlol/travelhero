@@ -3,7 +3,6 @@ package com.travel.hero.trip.controller;
 import com.travel.hero.trip.dto.CreateTripRequest;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.service.TripService;
-import com.travel.hero.user.dto.UserResponse;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

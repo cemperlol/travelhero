@@ -1,6 +1,7 @@
 package com.travel.hero.attachment.controller;
 
-import com.travel.hero.attachment.dto.AttachmentContent;
+import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
+import com.travel.hero.attachment.dto.CreateAttachmentRequest;
 import com.travel.hero.attachment.service.DefaultAttachmentService;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -18,8 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.accept.MediaTypeFileExtensionResolver;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.InputStream;
+import java.net.URI;
 
 @Tag(
         name = "Attachments",
@@ -32,6 +35,43 @@ public class AttachmentController {
 
     private final DefaultAttachmentService attachmentService;
     private final MediaTypeFileExtensionResolver extensionResolver;
+
+    @Operation(
+            summary = "Post attachment",
+            description = """
+                    Posts and returns attachment
+                    
+                    Requires authentication
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Trip successfully created"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid trip data"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User is not authenticated"
+            )
+    })
+    @PostMapping
+    public ResponseEntity<AttachmentMetadataResponse> uploadAttachment(
+            @Valid @RequestBody CreateAttachmentRequest request,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        AttachmentMetadataResponse response = attachmentService.create(request, currentUser);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
+    }
 
     @Operation(
             summary = "Get attachment content",
@@ -69,17 +109,17 @@ public class AttachmentController {
             @PathVariable Long id,
             @AuthenticationPrincipal User currentUser
     ) {
-        AttachmentContent content = attachmentService.get(id, currentUser);
+        AttachmentMetadataResponse response = attachmentService.get(id, currentUser);
 
-        InputStreamResource resource = new InputStreamResource(content.content());
+        InputStreamResource resource = new InputStreamResource(response.content());
 
         return ResponseEntity
                 .ok()
                 .header(
                         HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"" + content.filename() + "\""
+                        "inline; filename=\"" + response.filename() + "\""
                 )
-                .contentType(MediaType.parseMediaType(content.contentType()))
+                .contentType(MediaType.parseMediaType(response.contentType()))
                 .body(resource);
     }
 

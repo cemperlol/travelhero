@@ -1,6 +1,7 @@
 package com.travel.hero.attachment.service;
 
-import com.travel.hero.attachment.dto.AttachmentContent;
+import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
+import com.travel.hero.attachment.dto.CreateAttachmentRequest;
 import com.travel.hero.attachment.exception.AttachmentNotFoundException;
 import com.travel.hero.attachment.model.Attachment;
 import com.travel.hero.attachment.repository.AttachmentRepository;
@@ -21,8 +22,13 @@ public class DefaultAttachmentService implements AttachmentService {
     private final FileStorageService storageService;
 
     @Override
+    public AttachmentMetadataResponse create(CreateAttachmentRequest request, User currentUser) {
+        return null;
+    }
+
+    @Override
     @Transactional(readOnly = true)
-    public AttachmentContent get(Long attachmentId, User currentUser) {
+    public AttachmentMetadataResponse get(Long attachmentId, User currentUser) {
         Attachment attachment = attachmentRepository.findById(attachmentId)
                 .orElseThrow(() -> new AttachmentNotFoundException("There is no such attachment"));
 
@@ -30,7 +36,8 @@ public class DefaultAttachmentService implements AttachmentService {
 
         InputStream content = storageService.load(attachment.getStorageKey());
 
-        return new AttachmentContent(
+        return new AttachmentMetadataResponse(
+                attachment.getId(),
                 content,
                 attachment.getFilename(),
                 attachment.getContentType()
