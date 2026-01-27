@@ -1,7 +1,8 @@
 package com.travel.hero.attachment.controller;
 
 import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
-import com.travel.hero.attachment.dto.CreateAttachmentRequest;
+import com.travel.hero.attachment.dto.CreateAttachmentCommand;
+import com.travel.hero.attachment.enumeration.AttachmentType;
 import com.travel.hero.attachment.service.DefaultAttachmentService;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,8 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.accept.MediaTypeFileExtensionResolver;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 
 @Tag(
@@ -47,23 +50,36 @@ public class AttachmentController {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "201",
-                    description = "Trip successfully created"
+                    description = "Attachment successfully created"
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Invalid trip data"
+                    description = "Invalid attachment data"
             ),
             @ApiResponse(
                     responseCode = "401",
                     description = "User is not authenticated"
             )
     })
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AttachmentMetadataResponse> uploadAttachment(
-            @Valid @RequestBody CreateAttachmentRequest request,
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("type") AttachmentType type,
+            @RequestPart("tripId") Long tripId,
             @AuthenticationPrincipal User currentUser
-    ) {
-        AttachmentMetadataResponse response = attachmentService.create(request, currentUser);
+    ) throws IOException {
+        CreateAttachmentCommand command = new CreateAttachmentCommand(
+                file.getOriginalFilename(),
+                file.getContentType(),
+                file.getSize(),
+                type,
+                tripId,
+                file.getInputStream()
+        );
+
+        AttachmentMetadataResponse response =
+                attachmentService.create(command, currentUser);
+
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -111,7 +127,7 @@ public class AttachmentController {
     ) {
         AttachmentMetadataResponse response = attachmentService.get(id, currentUser);
 
-        InputStreamResource resource = new InputStreamResource(response.content());
+        Resource resource = new InputStreamResource(response.content());
 
         return ResponseEntity
                 .ok()

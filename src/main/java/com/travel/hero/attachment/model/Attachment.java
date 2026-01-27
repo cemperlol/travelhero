@@ -37,7 +37,6 @@ public class Attachment {
     @Column(nullable = false)
     private String storageKey;
 
-    @CreationTimestamp
     @Column(name = "uploaded_at")
     private LocalDateTime uploadedAt;
 
@@ -48,13 +47,6 @@ public class Attachment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trip_id", nullable = false, updatable = false)
     private Trip trip;
-
-    @PreRemove
-    private void preRemove() {
-        if (trip != null) {
-            trip.getAttachments().remove(this);
-        }
-    }
 
     public static Attachment create(
             Trip trip,
