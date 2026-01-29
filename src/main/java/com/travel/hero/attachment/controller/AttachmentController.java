@@ -40,15 +40,23 @@ public class AttachmentController {
     @Operation(
             summary = "Post attachment",
             description = """
-                    Posts and returns attachment
+                    Posts and returns attachment.
                     
-                    Requires authentication
+                    **File restrictions:**
+                    - Maximum size: 10MB
+                    - Supported types: based on AttachmentType
+                    
+                    Requires authentication.
                     """
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "201",
-                    description = "Attachment successfully created"
+                    description = "Attachment successfully created",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AttachmentMetadataResponse.class)
+                    )
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -174,7 +182,7 @@ public class AttachmentController {
     @Operation(
             summary = "Delete attachment content",
             description = """
-                    Deletes content of the attachment.
+                    Deletes the entire attachment including its metadata and content.
                     
                     Requires authentication.
                     """
@@ -182,11 +190,7 @@ public class AttachmentController {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",
-                    description = "File successfully deleted",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
-                            schema = @Schema(type = "string", format = "binary")
-                    )
+                    description = "Attachment successfully deleted"
             ),
             @ApiResponse(
                     responseCode = "401",
