@@ -1,7 +1,10 @@
 package com.travel.hero.attachment.controller;
 
 import com.travel.hero.attachment.dto.AttachmentContent;
-import com.travel.hero.attachment.service.DefaultAttachmentService;
+import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
+import com.travel.hero.attachment.dto.CreateAttachmentCommand;
+import com.travel.hero.attachment.enumeration.AttachmentType;
+import com.travel.hero.attachment.service.AttachmentService;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,22 +19,80 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.accept.MediaTypeFileExtensionResolver;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
 
 @Tag(
         name = "Attachments",
         description = "Working with attachments (files, documents, etc.)"
 )
 @RestController
-@RequestMapping("/api/v1/attachments")
+@RequestMapping("/api/v1/trips/{tripId}/attachments")
 @RequiredArgsConstructor
 public class AttachmentController {
 
-    private final DefaultAttachmentService attachmentService;
-    private final MediaTypeFileExtensionResolver extensionResolver;
+    private final AttachmentService attachmentService;
+
+    @Operation(
+            summary = "Post attachment",
+            description = """
+                    Posts and returns attachment.
+                    
+                    **File restrictions:**
+                    - Maximum size: 10MB
+                    - Supported types: based on AttachmentType
+                    
+                    Requires authentication.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Attachment successfully created",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AttachmentMetadataResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid attachment data"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User is not authenticated"
+            )
+    })
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AttachmentMetadataResponse> uploadAttachment(
+            @PathVariable Long tripId,
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("type") AttachmentType type,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        CreateAttachmentCommand command = new CreateAttachmentCommand(
+                file.getOriginalFilename(),
+                file.getContentType(),
+                file.getSize(),
+                type,
+                tripId,
+                file
+        );
+
+        AttachmentMetadataResponse response = attachmentService.create(command, currentUser);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
+    }
 
     @Operation(
             summary = "Get attachment content",
@@ -64,14 +125,13 @@ public class AttachmentController {
                     description = "Attachment not found"
             )
     })
-    @GetMapping("/{id}/content")
+    @GetMapping("/{attachmentId}/content")
     public ResponseEntity<Resource> getContent(
-            @PathVariable Long id,
+            @PathVariable Long tripId,
+            @PathVariable Long attachmentId,
             @AuthenticationPrincipal User currentUser
     ) {
-        AttachmentContent content = attachmentService.get(id, currentUser);
-
-        InputStreamResource resource = new InputStreamResource(content.content());
+        AttachmentContent content = attachmentService.getContent(tripId, attachmentId, currentUser);
 
         return ResponseEntity
                 .ok()
@@ -80,13 +140,49 @@ public class AttachmentController {
                         "inline; filename=\"" + content.filename() + "\""
                 )
                 .contentType(MediaType.parseMediaType(content.contentType()))
-                .body(resource);
+                .body(new InputStreamResource(content.stream()));
+    }
+
+    @Operation(
+            summary = "Get attachments metadata",
+            description = """
+                    Get metadata of the attachments.
+                    
+                    Requires authentication.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Metadata successfully loaded"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User is not authenticated"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "No access to attachments"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Attachments not found"
+            )
+    })
+    @GetMapping()
+    public ResponseEntity<List<AttachmentMetadataResponse>> getAttachments(
+            @PathVariable Long tripId,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        return ResponseEntity.ok(
+                attachmentService.getAttachments(tripId, currentUser)
+        );
     }
 
     @Operation(
             summary = "Delete attachment content",
             description = """
-                    Deletes content of the attachment.
+                    Deletes the entire attachment including its metadata and content.
                     
                     Requires authentication.
                     """
@@ -94,11 +190,7 @@ public class AttachmentController {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",
-                    description = "File successfully deleted",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
-                            schema = @Schema(type = "string", format = "binary")
-                    )
+                    description = "Attachment successfully deleted"
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -113,11 +205,12 @@ public class AttachmentController {
                     description = "Attachment not found"
             )
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{attachmentId}")
     public void deleteAttachment(
-            @PathVariable Long id,
+            @PathVariable Long tripId,
+            @PathVariable Long attachmentId,
             @AuthenticationPrincipal User currentUser
     ) {
-        attachmentService.delete(id, currentUser);
+        attachmentService.delete(tripId, attachmentId, currentUser);
     }
 }

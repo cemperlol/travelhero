@@ -1,11 +1,19 @@
 package com.travel.hero.attachment.service;
 
 import com.travel.hero.attachment.dto.AttachmentContent;
+import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
+import com.travel.hero.attachment.dto.CreateAttachmentCommand;
 import com.travel.hero.user.model.User;
+
+import java.util.List;
 
 public interface AttachmentService {
 
-    AttachmentContent get(Long attachmentId, User currentUser);
+    AttachmentMetadataResponse create(CreateAttachmentCommand command, User currentUser);
 
-    void delete(Long attachmentId, User currentUser);
+    AttachmentContent getContent(Long tripId, Long attachmentId, User currentUser);
+
+    List<AttachmentMetadataResponse> getAttachments(Long tripId, User currentUser);
+
+    void delete(Long tripId, Long attachmentId, User currentUser);
 }
