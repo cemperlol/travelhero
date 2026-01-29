@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -32,7 +31,7 @@ import java.net.URI;
         description = "Working with attachments (files, documents, etc.)"
 )
 @RestController
-@RequestMapping("/api/v1/attachments")
+@RequestMapping("/api/v1/trips/{tripId}/attachments")
 @RequiredArgsConstructor
 public class AttachmentController {
 
@@ -65,7 +64,7 @@ public class AttachmentController {
     public ResponseEntity<AttachmentMetadataResponse> uploadAttachment(
             @RequestPart("file") MultipartFile file,
             @RequestPart("type") AttachmentType type,
-            @RequestPart("tripId") Long tripId,
+            @PathVariable @RequestPart("tripId") Long tripId,
             @AuthenticationPrincipal User currentUser
     ) throws IOException {
         CreateAttachmentCommand command = new CreateAttachmentCommand(
@@ -120,14 +119,15 @@ public class AttachmentController {
                     description = "Attachment not found"
             )
     })
-    @GetMapping("/{id}/content")
+    @GetMapping("/{attachmentId}/content")
     public ResponseEntity<Resource> getContent(
-            @PathVariable Long id,
+            @PathVariable Long tripId,
+            @PathVariable Long attachmentId,
             @AuthenticationPrincipal User currentUser
     ) {
-        AttachmentMetadataResponse response = attachmentService.get(id, currentUser);
+        AttachmentMetadataResponse response = attachmentService.get(tripId, attachmentId, currentUser);
 
-        Resource resource = new InputStreamResource(response.content());
+        Resource resource = new InputStreamResource(response.);
 
         return ResponseEntity
                 .ok()
@@ -169,11 +169,12 @@ public class AttachmentController {
                     description = "Attachment not found"
             )
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{attachmentId}")
     public void deleteAttachment(
-            @PathVariable Long id,
+            @PathVariable Long tripId,
+            @PathVariable Long attachmentId,
             @AuthenticationPrincipal User currentUser
     ) {
-        attachmentService.delete(id, currentUser);
+        attachmentService.delete(tripId, attachmentId, currentUser);
     }
 }

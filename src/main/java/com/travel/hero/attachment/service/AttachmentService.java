@@ -8,7 +8,7 @@ public interface AttachmentService {
 
     AttachmentMetadataResponse create(CreateAttachmentCommand command, User currentUser);
 
-    AttachmentMetadataResponse get(Long id, User currentUser);
+    AttachmentMetadataResponse get(Long tripId, Long attachmentId, User currentUser);
 
-    void delete(Long id, User currentUser);
+    void delete(Long tripId, Long attachmentId, User currentUser);
 }

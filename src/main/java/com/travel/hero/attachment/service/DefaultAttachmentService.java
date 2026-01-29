@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.time.Instant;
 import java.time.ZoneOffset;
 
 @Service
@@ -66,13 +66,17 @@ public class DefaultAttachmentService implements AttachmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public AttachmentMetadataResponse get(Long id, User currentUser) {
-        Attachment attachment = attachmentRepository.findById(id)
+    public AttachmentMetadataResponse get(Long tripId, Long attachmentId, User currentUser) {
+        Attachment attachment = attachmentRepository.findByIdAndTripId(attachmentId, tripId)
                 .orElseThrow(() -> new AttachmentNotFoundException("There is no such attachment"));
 
         validateAttachmentAccess(attachment, currentUser);
 
-        InputStream content = storageService.load(attachment.getStorageKey());
+        try(InputStream content = storageService.load(attachment.getStorageKey())) {
+
+        } catch (IOException e) {
+
+        }
 
         return new AttachmentMetadataResponse(
                 attachment.getId(),
@@ -86,13 +90,13 @@ public class DefaultAttachmentService implements AttachmentService {
 
     @Override
     @Transactional
-    public void delete(Long id, User currentUser) {
-        Attachment attachment = attachmentRepository.findById(id)
+    public void delete(Long tripId, Long attachmentId, User currentUser) {
+        Attachment attachment = attachmentRepository.findByIdAndTripId(attachmentId, tripId)
                 .orElseThrow(() -> new AttachmentNotFoundException("There is no such attachment"));
 
         validateAttachmentAccess(attachment, currentUser);
 
-        attachmentRepository.deleteById(id);
+        attachmentRepository.delete(attachment);
     }
 
     private void validateAttachmentAccess(Attachment attachment, User currentUser) {
