@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -77,7 +76,7 @@ public class DefaultAttachmentService implements AttachmentService {
         Attachment attachment = attachmentRepository
                 .findByIdAndTripId(attachmentId, tripId)
                 .orElseThrow(() ->
-                        new AttachmentNotFoundException("No attachment with such attachemnt id and trip id"));
+                        new AttachmentNotFoundException("No attachment with such attachment id and trip id"));
 
         if (!attachment.getTrip().getUser().equals(currentUser)) {
             throw new AccessDeniedException("Access denied");
@@ -98,8 +97,20 @@ public class DefaultAttachmentService implements AttachmentService {
             Long tripId,
             User currentUser
     ) {
-
-        return null;
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new TripNotFoundException("No trip with such id"));
+        return trip.getAttachments()
+                .stream()
+                .map(a -> new AttachmentMetadataResponse(
+                        a.getId(),
+                        a.getFilename(),
+                        a.getContentType(),
+                        a.getSize(),
+                        a.getType(),
+                        a.getUploadedAt().toInstant(ZoneOffset.UTC)
+                        )
+                )
+                .toList();
     }
 
     @Override

@@ -61,9 +61,9 @@ public class AttachmentController {
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AttachmentMetadataResponse> uploadAttachment(
+            @PathVariable Long tripId,
             @RequestPart("file") MultipartFile file,
             @RequestPart("type") AttachmentType type,
-            @PathVariable @RequestPart("tripId") Long tripId,
             @AuthenticationPrincipal User currentUser
     ) throws IOException {
         CreateAttachmentCommand command = new CreateAttachmentCommand(
@@ -72,11 +72,10 @@ public class AttachmentController {
                 file.getSize(),
                 type,
                 tripId,
-                file.getInputStream()
+                file
         );
 
-        AttachmentMetadataResponse response =
-                attachmentService.create(command, currentUser);
+        AttachmentMetadataResponse response = attachmentService.create(command, currentUser);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -141,7 +140,7 @@ public class AttachmentController {
             @PathVariable Long tripId,
             @AuthenticationPrincipal User currentUser
     ) {
-        AttachmentContent content = attachmentService.getContent(tripId, attachmentId, currentUser);
+         = attachmentService.getAttachments(tripId, currentUser);
 
         return ResponseEntity
                 .ok()
