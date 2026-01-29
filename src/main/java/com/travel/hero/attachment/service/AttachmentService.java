@@ -1,5 +1,6 @@
 package com.travel.hero.attachment.service;
 
+import com.travel.hero.attachment.dto.AttachmentContent;
 import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
 import com.travel.hero.attachment.dto.CreateAttachmentCommand;
 import com.travel.hero.user.model.User;
@@ -8,7 +9,7 @@ public interface AttachmentService {
 
     AttachmentMetadataResponse create(CreateAttachmentCommand command, User currentUser);
 
-    AttachmentMetadataResponse get(Long tripId, Long attachmentId, User currentUser);
+    AttachmentContent getContent(Long tripId, Long attachmentId, User currentUser);
 
     void delete(Long tripId, Long attachmentId, User currentUser);
 }

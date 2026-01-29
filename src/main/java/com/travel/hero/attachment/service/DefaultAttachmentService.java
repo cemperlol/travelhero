@@ -1,5 +1,6 @@
 package com.travel.hero.attachment.service;
 
+import com.travel.hero.attachment.dto.AttachmentContent;
 import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
 import com.travel.hero.attachment.dto.CreateAttachmentCommand;
 import com.travel.hero.attachment.exception.AttachmentNotFoundException;
@@ -66,25 +67,22 @@ public class DefaultAttachmentService implements AttachmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public AttachmentMetadataResponse get(Long tripId, Long attachmentId, User currentUser) {
-        Attachment attachment = attachmentRepository.findByIdAndTripId(attachmentId, tripId)
-                .orElseThrow(() -> new AttachmentNotFoundException("There is no such attachment"));
+    public AttachmentContent getContent(Long tripId, Long attachmentId, User currentUser) {
+        Attachment attachment = attachmentRepository
+                .findByIdAndTripId(attachmentId, tripId)
+                .orElseThrow(() ->
+                        new AttachmentNotFoundException("No attachment with such attachemnt id and trip id"));
 
-        validateAttachmentAccess(attachment, currentUser);
-
-        try(InputStream content = storageService.load(attachment.getStorageKey())) {
-
-        } catch (IOException e) {
-
+        if (!attachment.getTrip().getUser().equals(currentUser)) {
+            throw new AccessDeniedException("Access denied");
         }
 
-        return new AttachmentMetadataResponse(
-                attachment.getId(),
+        InputStream stream = storageService.load(attachment.getStorageKey());
+
+        return new AttachmentContent(
+                stream,
                 attachment.getFilename(),
-                attachment.getContentType(),
-                attachment.getSize(),
-                attachment.getType(),
-                attachment.getUploadedAt().toInstant(ZoneOffset.UTC)
+                attachment.getContentType()
         );
     }
 
