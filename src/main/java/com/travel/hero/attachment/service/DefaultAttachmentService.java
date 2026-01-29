@@ -8,6 +8,8 @@ import com.travel.hero.attachment.exception.FailedToLoadAttachmentException;
 import com.travel.hero.attachment.model.Attachment;
 import com.travel.hero.attachment.repository.AttachmentRepository;
 import com.travel.hero.common.exception.AccessDeniedException;
+import com.travel.hero.file.exception.FileIsEmptyException;
+import com.travel.hero.file.exception.FileIsTooBigException;
 import com.travel.hero.file.service.FileStorageService;
 import com.travel.hero.trip.exception.TripNotFoundException;
 import com.travel.hero.trip.model.Trip;
@@ -16,6 +18,7 @@ import com.travel.hero.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +38,7 @@ public class DefaultAttachmentService implements AttachmentService {
             CreateAttachmentCommand command,
             User currentUser
     ) {
+        validateFileSize(command.file());
         Trip trip = findTrip(command.tripId());
         validateUserOwnsTrip(trip, currentUser);
 
@@ -147,5 +151,15 @@ public class DefaultAttachmentService implements AttachmentService {
     private Attachment findAttachmentByIdAndTripId(Long attachmentId, Long tripId) {
         return attachmentRepository.findByIdAndTripId(attachmentId, tripId)
                 .orElseThrow(() -> new AttachmentNotFoundException("There is no such attachment"));
+    }
+
+    private void validateFileSize(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new FileIsEmptyException("File is empty");
+        }
+
+        if (file.getSize() > 10 * 1024 * 1024) {
+            throw new FileIsTooBigException("File is too big");
+        }
     }
 }
