@@ -136,6 +136,23 @@ public class AttachmentController {
                 .body(new InputStreamResource(content.stream()));
     }
 
+    @GetMapping()
+    public ResponseEntity<Resource> getAttachments(
+            @PathVariable Long tripId,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        AttachmentContent content = attachmentService.getContent(tripId, attachmentId, currentUser);
+
+        return ResponseEntity
+                .ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" + content.filename() + "\""
+                )
+                .contentType(MediaType.parseMediaType(content.contentType()))
+                .body(new InputStreamResource(content.stream()));
+    }
+
     @Operation(
             summary = "Delete attachment content",
             description = """

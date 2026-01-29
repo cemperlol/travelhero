@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZoneOffset;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +31,8 @@ public class DefaultAttachmentService implements AttachmentService {
 
     @Override
     public AttachmentMetadataResponse create(
-            CreateAttachmentCommand command, User currentUser
+            CreateAttachmentCommand command,
+            User currentUser
     ) {
         Trip trip = tripRepository.findById(command.tripId())
                 .orElseThrow(() -> new TripNotFoundException("Trip not found"));
@@ -67,7 +69,11 @@ public class DefaultAttachmentService implements AttachmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public AttachmentContent getContent(Long tripId, Long attachmentId, User currentUser) {
+    public AttachmentContent getContent(
+            Long tripId,
+            Long attachmentId,
+            User currentUser
+    ) {
         Attachment attachment = attachmentRepository
                 .findByIdAndTripId(attachmentId, tripId)
                 .orElseThrow(() ->
@@ -87,8 +93,22 @@ public class DefaultAttachmentService implements AttachmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<AttachmentMetadataResponse> getAttachments(
+            Long tripId,
+            User currentUser
+    ) {
+
+        return null;
+    }
+
+    @Override
     @Transactional
-    public void delete(Long tripId, Long attachmentId, User currentUser) {
+    public void delete(
+            Long tripId,
+            Long attachmentId,
+            User currentUser
+    ) {
         Attachment attachment = attachmentRepository.findByIdAndTripId(attachmentId, tripId)
                 .orElseThrow(() -> new AttachmentNotFoundException("There is no such attachment"));
 
