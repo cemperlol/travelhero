@@ -8,6 +8,6 @@ public class FileIsEmptyException extends BusinessException {
     }
 
   public FileIsEmptyException(String message, Throwable cause) {
-    super(message);
+    super(message, cause);
   }
 }

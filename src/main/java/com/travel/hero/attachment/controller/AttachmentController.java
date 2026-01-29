@@ -5,6 +5,7 @@ import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
 import com.travel.hero.attachment.dto.CreateAttachmentCommand;
 import com.travel.hero.attachment.enumeration.AttachmentType;
 import com.travel.hero.attachment.service.AttachmentService;
+import com.travel.hero.file.exception.FileIsEmptyException;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -67,7 +68,11 @@ public class AttachmentController {
             @AuthenticationPrincipal User currentUser
     ) {
         if (file.isEmpty()) {
-            throw new
+            throw new FileIsEmptyException("File is empty");
+        }
+
+        if (file.getSize() > 10 * 1024 * 1024) {
+            throw new File
         }
 
         CreateAttachmentCommand command = new CreateAttachmentCommand(
