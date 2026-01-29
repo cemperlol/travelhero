@@ -1,5 +1,6 @@
 package com.travel.hero.attachment.controller;
 
+import com.travel.hero.attachment.dto.AttachmentContent;
 import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
 import com.travel.hero.attachment.dto.CreateAttachmentCommand;
 import com.travel.hero.attachment.enumeration.AttachmentType;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.accept.MediaTypeFileExtensionResolver;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -36,7 +36,6 @@ import java.net.URI;
 public class AttachmentController {
 
     private final DefaultAttachmentService attachmentService;
-    private final MediaTypeFileExtensionResolver extensionResolver;
 
     @Operation(
             summary = "Post attachment",
@@ -125,18 +124,16 @@ public class AttachmentController {
             @PathVariable Long attachmentId,
             @AuthenticationPrincipal User currentUser
     ) {
-        AttachmentMetadataResponse response = attachmentService.get(tripId, attachmentId, currentUser);
-
-        Resource resource = new InputStreamResource(response.);
+        AttachmentContent content = attachmentService.getContent(tripId, attachmentId, currentUser);
 
         return ResponseEntity
                 .ok()
                 .header(
                         HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"" + response.filename() + "\""
+                        "inline; filename=\"" + content.filename() + "\""
                 )
-                .contentType(MediaType.parseMediaType(response.contentType()))
-                .body(resource);
+                .contentType(MediaType.parseMediaType(content.contentType()))
+                .body(new InputStreamResource(content.stream()));
     }
 
     @Operation(
