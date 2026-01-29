@@ -1,8 +1,10 @@
 package com.travel.hero.attachment.exception;
 
+import com.travel.hero.common.exception.BusinessException;
+
 import java.io.IOException;
 
-public class FailedToLoadAttachmentException extends IOException {
+public class FailedToLoadAttachmentException extends BusinessException {
     public FailedToLoadAttachmentException(String message) {
         super(message);
     }

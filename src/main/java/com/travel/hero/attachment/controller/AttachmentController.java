@@ -4,7 +4,7 @@ import com.travel.hero.attachment.dto.AttachmentContent;
 import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
 import com.travel.hero.attachment.dto.CreateAttachmentCommand;
 import com.travel.hero.attachment.enumeration.AttachmentType;
-import com.travel.hero.attachment.service.DefaultAttachmentService;
+import com.travel.hero.attachment.service.AttachmentService;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
 @Tag(
         name = "Attachments",
@@ -35,7 +35,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class AttachmentController {
 
-    private final DefaultAttachmentService attachmentService;
+    private final AttachmentService attachmentService;
 
     @Operation(
             summary = "Post attachment",
@@ -65,7 +65,11 @@ public class AttachmentController {
             @RequestPart("file") MultipartFile file,
             @RequestPart("type") AttachmentType type,
             @AuthenticationPrincipal User currentUser
-    ) throws IOException {
+    ) {
+        if (file.isEmpty()) {
+            throw new
+        }
+
         CreateAttachmentCommand command = new CreateAttachmentCommand(
                 file.getOriginalFilename(),
                 file.getContentType(),
@@ -136,20 +140,13 @@ public class AttachmentController {
     }
 
     @GetMapping()
-    public ResponseEntity<Resource> getAttachments(
+    public ResponseEntity<List<AttachmentMetadataResponse>> getAttachments(
             @PathVariable Long tripId,
             @AuthenticationPrincipal User currentUser
     ) {
-         = attachmentService.getAttachments(tripId, currentUser);
-
-        return ResponseEntity
-                .ok()
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"" + content.filename() + "\""
-                )
-                .contentType(MediaType.parseMediaType(content.contentType()))
-                .body(new InputStreamResource(content.stream()));
+        return ResponseEntity.ok(
+                attachmentService.getAttachments(tripId, currentUser)
+        );
     }
 
     @Operation(

@@ -4,6 +4,7 @@ import com.travel.hero.attachment.dto.AttachmentContent;
 import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
 import com.travel.hero.attachment.dto.CreateAttachmentCommand;
 import com.travel.hero.attachment.exception.AttachmentNotFoundException;
+import com.travel.hero.attachment.exception.FailedToLoadAttachmentException;
 import com.travel.hero.attachment.model.Attachment;
 import com.travel.hero.attachment.repository.AttachmentRepository;
 import com.travel.hero.common.exception.AccessDeniedException;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -33,17 +35,15 @@ public class DefaultAttachmentService implements AttachmentService {
             CreateAttachmentCommand command,
             User currentUser
     ) {
-        Trip trip = tripRepository.findById(command.tripId())
-                .orElseThrow(() -> new TripNotFoundException("Trip not found"));
+        Trip trip = findTrip(command.tripId());
+        validateUserOwnsTrip(trip, currentUser);
 
-        if (!trip.getUser().getId().equals(currentUser.getId())) {
-            throw new AccessDeniedException("Access denied");
+        String storageKey;
+        try (InputStream is = command.file().getInputStream()) {
+            storageKey = storageService.store(is, command.contentType());
+        } catch (IOException e) {
+            throw new FailedToLoadAttachmentException("Failed to store attachment");
         }
-
-        String storageKey = storageService.store(
-                command.content(),
-                command.contentType()
-        );
 
         Attachment attachment = Attachment.create(
                 trip,
@@ -78,9 +78,7 @@ public class DefaultAttachmentService implements AttachmentService {
                 .orElseThrow(() ->
                         new AttachmentNotFoundException("No attachment with such attachment id and trip id"));
 
-        if (!attachment.getTrip().getUser().equals(currentUser)) {
-            throw new AccessDeniedException("Access denied");
-        }
+        validateUserOwnsAttachment(attachment, currentUser);
 
         InputStream stream = storageService.load(attachment.getStorageKey());
 
@@ -97,8 +95,10 @@ public class DefaultAttachmentService implements AttachmentService {
             Long tripId,
             User currentUser
     ) {
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new TripNotFoundException("No trip with such id"));
+        Trip trip = findTrip(tripId);
+
+        validateUserOwnsTrip(trip, currentUser);
+
         return trip.getAttachments()
                 .stream()
                 .map(a -> new AttachmentMetadataResponse(
@@ -120,17 +120,32 @@ public class DefaultAttachmentService implements AttachmentService {
             Long attachmentId,
             User currentUser
     ) {
-        Attachment attachment = attachmentRepository.findByIdAndTripId(attachmentId, tripId)
-                .orElseThrow(() -> new AttachmentNotFoundException("There is no such attachment"));
+        Attachment attachment = findAttachmentByIdAndTripId(attachmentId, tripId);
 
-        validateAttachmentAccess(attachment, currentUser);
+        validateUserOwnsAttachment(attachment, currentUser);
 
         attachmentRepository.delete(attachment);
     }
 
-    private void validateAttachmentAccess(Attachment attachment, User currentUser) {
+    private void validateUserOwnsAttachment(Attachment attachment, User currentUser) {
         if (!attachment.getTrip().getUser().getId().equals(currentUser.getId())) {
             throw new AccessDeniedException("Access denied");
         }
+    }
+
+    private void validateUserOwnsTrip(Trip trip, User currentUser) {
+        if (!trip.getUser().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
+    private Trip findTrip(Long tripId) {
+        return tripRepository.findById(tripId)
+                .orElseThrow(() -> new TripNotFoundException("Trip not found"));
+    }
+
+    private Attachment findAttachmentByIdAndTripId(Long attachmentId, Long tripId) {
+        return attachmentRepository.findByIdAndTripId(attachmentId, tripId)
+                .orElseThrow(() -> new AttachmentNotFoundException("There is no such attachment"));
     }
 }
