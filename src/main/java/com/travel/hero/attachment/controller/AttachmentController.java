@@ -5,8 +5,6 @@ import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
 import com.travel.hero.attachment.dto.CreateAttachmentCommand;
 import com.travel.hero.attachment.enumeration.AttachmentType;
 import com.travel.hero.attachment.service.AttachmentService;
-import com.travel.hero.file.exception.FileIsEmptyException;
-import com.travel.hero.file.exception.FileIsTooBigException;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -137,6 +135,32 @@ public class AttachmentController {
                 .body(new InputStreamResource(content.stream()));
     }
 
+    @Operation(
+            summary = "Get attachments metadata",
+            description = """
+                    Get metadata of the attachments.
+                    
+                    Requires authentication.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Metadata successfully loaded"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User is not authenticated"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "No access to attachments"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Attachments not found"
+            )
+    })
     @GetMapping()
     public ResponseEntity<List<AttachmentMetadataResponse>> getAttachments(
             @PathVariable Long tripId,

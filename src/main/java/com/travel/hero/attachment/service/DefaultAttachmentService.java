@@ -39,6 +39,7 @@ public class DefaultAttachmentService implements AttachmentService {
             User currentUser
     ) {
         validateFileSize(command.file());
+
         Trip trip = findTrip(command.tripId());
         validateUserOwnsTrip(trip, currentUser);
 
@@ -103,18 +104,7 @@ public class DefaultAttachmentService implements AttachmentService {
 
         validateUserOwnsTrip(trip, currentUser);
 
-        return trip.getAttachments()
-                .stream()
-                .map(a -> new AttachmentMetadataResponse(
-                        a.getId(),
-                        a.getFilename(),
-                        a.getContentType(),
-                        a.getSize(),
-                        a.getType(),
-                        a.getUploadedAt().toInstant(ZoneOffset.UTC)
-                        )
-                )
-                .toList();
+        return findAttachmentsMetadataAndValidate(trip);
     }
 
     @Override
@@ -161,5 +151,26 @@ public class DefaultAttachmentService implements AttachmentService {
         if (file.getSize() > 10 * 1024 * 1024) {
             throw new FileIsTooBigException("File is too big");
         }
+    }
+
+    private List<AttachmentMetadataResponse> findAttachmentsMetadataAndValidate(Trip trip) {
+        List<AttachmentMetadataResponse> results = trip.getAttachments()
+                .stream()
+                .map(a -> new AttachmentMetadataResponse(
+                                a.getId(),
+                                a.getFilename(),
+                                a.getContentType(),
+                                a.getSize(),
+                                a.getType(),
+                                a.getUploadedAt().toInstant(ZoneOffset.UTC)
+                        )
+                )
+                .toList();
+
+        if (results.isEmpty()) {
+            throw new AttachmentNotFoundException("Attachments not found");
+        }
+
+        return results;
     }
 }
