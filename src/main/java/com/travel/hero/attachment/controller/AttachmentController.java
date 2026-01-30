@@ -139,6 +139,10 @@ public class AttachmentController {
                         HttpHeaders.CONTENT_DISPOSITION,
                         "inline; filename=\"" + content.filename() + "\""
                 )
+                .header(
+                        HttpHeaders.CACHE_CONTROL,
+                        "private, max-age=3600"
+                )
                 .contentType(MediaType.parseMediaType(content.contentType()))
                 .body(new InputStreamResource(content.stream()));
     }

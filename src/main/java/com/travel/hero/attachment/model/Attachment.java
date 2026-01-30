@@ -22,13 +22,11 @@ public class Attachment {
     @Column(nullable = false)
     private String filename;
 
-    @Column(name = "file_path")
     private String filePath;
 
     @Column(nullable = false)
     private String contentType;
 
-    @Column(name = "file_extension")
     private String fileExtension;
 
     @Column(nullable = false)
@@ -37,7 +35,8 @@ public class Attachment {
     @Column(nullable = false)
     private String storageKey;
 
-    @Column(name = "uploaded_at")
+    private String previewStorageKey;
+
     private LocalDateTime uploadedAt;
 
     @Enumerated(EnumType.STRING)

@@ -1,10 +1,12 @@
 package com.travel.hero.file.service;
 
+import com.travel.hero.file.dto.StoredFile;
+
 import java.io.InputStream;
 
 public interface FileStorageService {
 
-    String store(
+    StoredFile store(
             InputStream content,
             String contentType
     );

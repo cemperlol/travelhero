@@ -45,7 +45,7 @@ public class DefaultAttachmentService implements AttachmentService {
 
         String storageKey;
         try (InputStream is = command.file().getInputStream()) {
-            storageKey = storageService.store(is, command.contentType());
+            storageKey = storageService.store(is, command.contentType()).storageKey();
         } catch (IOException e) {
             throw new FailedToLoadAttachmentException("Failed to store attachment");
         }
