@@ -9,6 +9,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.client.RestClient;
 import tools.jackson.databind.ser.jdk.StringSerializer;
@@ -32,7 +33,8 @@ public class RestClientConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
+//        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean

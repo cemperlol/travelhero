@@ -1,5 +1,6 @@
 package com.travel.hero.trip.controller;
 
+import com.travel.hero.attachment.service.AttachmentEventPublisher;
 import com.travel.hero.trip.dto.CreateTripRequest;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.service.TripService;
@@ -31,6 +32,13 @@ import java.net.URI;
 public class TripController {
 
     private final TripService tripService;
+    private final AttachmentEventPublisher publisher;
+
+    @GetMapping("/")
+    public ResponseEntity.BodyBuilder get() {
+        publisher.attachmentUploaded(1L, 10L);
+        return ResponseEntity.ok();
+    }
 
     @Operation(
             summary = "Post trip",
