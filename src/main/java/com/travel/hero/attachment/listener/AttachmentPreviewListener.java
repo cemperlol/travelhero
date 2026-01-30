@@ -12,6 +12,6 @@ public class AttachmentPreviewListener {
             groupId = "attachment-preview"
     )
     public void handle(AttachmentUploadedEvent event) {
-        System.out.println("Attachment uploaded" + event);
+        System.err.println("Attachment uploaded" + event);
     }
 }
