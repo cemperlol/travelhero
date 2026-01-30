@@ -13,15 +13,15 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
-public class LocalFileStorageService implements FileStorageService{
+public class LocalFileStorageService implements FileStorageService {
 
     private final Path root = Paths.get("data/files");
 
     @Override
     public StoredFile store(
             InputStream content,
-            String originalFilename,
-            String contentType) {
+            String originalFilename
+    ) {
         String key = UUID.randomUUID().toString();
 
         long size;

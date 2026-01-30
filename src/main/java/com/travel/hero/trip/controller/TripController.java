@@ -1,8 +1,12 @@
 package com.travel.hero.trip.controller;
 
+import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
+import com.travel.hero.attachment.dto.AttachmentUploadedEvent;
+import com.travel.hero.attachment.service.AttachmentEventPublisher;
 import com.travel.hero.trip.dto.CreateTripRequest;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.service.TripService;
+import com.travel.hero.user.dto.UserResponse;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,6 +35,13 @@ import java.net.URI;
 public class TripController {
 
     private final TripService tripService;
+    private final AttachmentEventPublisher publisher;
+
+    @GetMapping("/")
+    public ResponseEntity<Integer> get() {
+        publisher.attachmentUploaded(new AttachmentUploadedEvent(1L, 10L));
+        return ResponseEntity.ok(1);
+    }
 
     @Operation(
             summary = "Post trip",

@@ -35,8 +35,8 @@ public class AddTripAttachmentService implements TripAttachmentService {
         try {
             storedFile = storageService.store(
                     file.getInputStream(),
-                    file.getOriginalFilename(),
-                    file.getContentType());
+                    file.getOriginalFilename()
+            );
         } catch (IOException e) {
             throw new FileReaderException(
                     "Failed to read uploaded file: " + file.getOriginalFilename(),
