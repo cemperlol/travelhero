@@ -1,14 +1,11 @@
 package com.travel.hero.trip.controller;
 
-import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
-import com.travel.hero.attachment.dto.AttachmentUploadedEvent;
-import com.travel.hero.attachment.service.AttachmentEventPublisher;
 import com.travel.hero.trip.dto.CreateTripRequest;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.service.TripService;
-import com.travel.hero.user.dto.UserResponse;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -87,8 +84,8 @@ public class TripController {
                     responseCode = "200",
                     description = "Trips successfully received",
                     content = @Content(
-                            mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
-                            schema = @Schema(type = "list", format = "binary")
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            array = @ArraySchema(schema = @Schema(implementation = TripResponse.class))
                     )
             ),
             @ApiResponse(
@@ -98,10 +95,6 @@ public class TripController {
             @ApiResponse(
                     responseCode = "403",
                     description = "No access to trip"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Trips not found"
             )
     })
     @GetMapping("/")
