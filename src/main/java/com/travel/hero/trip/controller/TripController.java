@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @Tag(
         name = "Trips",
@@ -35,13 +36,6 @@ import java.net.URI;
 public class TripController {
 
     private final TripService tripService;
-    private final AttachmentEventPublisher publisher;
-
-    @GetMapping("/")
-    public ResponseEntity<Integer> get(@AuthenticationPrincipal User currentUser
-    ) {
-        return tripService.getAllById(currentUser.getId());
-    }
 
     @Operation(
             summary = "Post trip",
@@ -78,6 +72,42 @@ public class TripController {
                 .toUri();
 
         return ResponseEntity.created(location).body(response);
+    }
+
+    @Operation(
+            summary = "Get all trips",
+            description = """
+                    Returns all trips as list.
+                    
+                    Requires authentication
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Trips successfully received",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                            schema = @Schema(type = "list", format = "binary")
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User is not authenticated"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "No access to trip"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Trips not found"
+            )
+    })
+    @GetMapping("/")
+    public ResponseEntity<List<TripResponse>> get(@AuthenticationPrincipal User currentUser
+    ) {
+        return ResponseEntity.ok(tripService.getAllByUserId(currentUser.getId()));
     }
 
     @Operation(
