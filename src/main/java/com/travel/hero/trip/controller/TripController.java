@@ -1,14 +1,11 @@
 package com.travel.hero.trip.controller;
 
-import com.travel.hero.attachment.dto.AttachmentMetadataResponse;
-import com.travel.hero.attachment.dto.AttachmentUploadedEvent;
-import com.travel.hero.attachment.service.AttachmentEventPublisher;
 import com.travel.hero.trip.dto.CreateTripRequest;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.trip.service.TripService;
-import com.travel.hero.user.dto.UserResponse;
 import com.travel.hero.user.model.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @Tag(
         name = "Trips",
@@ -35,13 +33,6 @@ import java.net.URI;
 public class TripController {
 
     private final TripService tripService;
-    private final AttachmentEventPublisher publisher;
-
-    @GetMapping("/")
-    public ResponseEntity<Integer> get() {
-        publisher.attachmentUploaded(new AttachmentUploadedEvent(1L, 10L));
-        return ResponseEntity.ok(1);
-    }
 
     @Operation(
             summary = "Post trip",
@@ -78,6 +69,38 @@ public class TripController {
                 .toUri();
 
         return ResponseEntity.created(location).body(response);
+    }
+
+    @Operation(
+            summary = "Get all trips",
+            description = """
+                    Returns all trips as list.
+                    
+                    Requires authentication
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Trips successfully received",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            array = @ArraySchema(schema = @Schema(implementation = TripResponse.class))
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User is not authenticated"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "No access to trip"
+            )
+    })
+    @GetMapping("/")
+    public ResponseEntity<List<TripResponse>> get(@AuthenticationPrincipal User currentUser
+    ) {
+        return ResponseEntity.ok(tripService.getAllByUserId(currentUser.getId()));
     }
 
     @Operation(

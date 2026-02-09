@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class DefaultTripService implements TripService {
@@ -51,6 +54,14 @@ public class DefaultTripService implements TripService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<TripResponse> getAllByUserId(UUID userId) {
+        return findAllByUserId(userId).stream()
+                .map(this::mapToTripResponse)
+                .toList();
+    }
+
+    @Override
     public void delete(Long tripId, User currentUser) {
         Trip trip = findTrip(tripId);
 
@@ -73,6 +84,10 @@ public class DefaultTripService implements TripService {
                 .orElseThrow(() -> new TripNotFoundException(
                         String.format("There is no trip with id %d", tripId)
                 ));
+    }
+
+    private List<Trip> findAllByUserId(UUID userId) {
+        return tripRepository.findAllByUserId(userId);
     }
 
     private TripResponse mapToTripResponse(Trip trip) {
