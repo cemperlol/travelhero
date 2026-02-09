@@ -38,9 +38,9 @@ public class TripController {
     private final AttachmentEventPublisher publisher;
 
     @GetMapping("/")
-    public ResponseEntity<Integer> get() {
-        publisher.attachmentUploaded(new AttachmentUploadedEvent(1L, 10L));
-        return ResponseEntity.ok(1);
+    public ResponseEntity<Integer> get(@AuthenticationPrincipal User currentUser
+    ) {
+        return tripService.getAllById(currentUser.getId());
     }
 
     @Operation(

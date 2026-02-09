@@ -4,6 +4,9 @@ import com.travel.hero.trip.dto.CreateTripRequest;
 import com.travel.hero.trip.dto.TripResponse;
 import com.travel.hero.user.model.User;
 
+import java.util.List;
+import java.util.UUID;
+
 public interface TripService {
 
     TripResponse create(
@@ -15,6 +18,8 @@ public interface TripService {
             Long tripId,
             User currentUser
     );
+
+    List<TripResponse> getAllByUserId(UUID id);
 
     void delete(
             Long tripId,

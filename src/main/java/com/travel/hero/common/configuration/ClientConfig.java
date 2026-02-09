@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class RestClientConfig {
+public class ClientConfig {
 
     @Value("${spring.kafka.producer.bootstrap-servers}")
     private String bootstrapServers;
@@ -64,7 +64,6 @@ public class RestClientConfig {
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
-    // ВАЖНО: Имя бина должно быть ТОЧНО "kafkaListenerContainerFactory"
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String>
     kafkaListenerContainerFactory() {
