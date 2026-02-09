@@ -10,7 +10,7 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class DefaultAttachmentEventPublisher implements AttachmentEventPublisher {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
     @Override
