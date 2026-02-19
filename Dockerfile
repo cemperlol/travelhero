@@ -14,6 +14,7 @@ FROM eclipse-temurin:24-jre
 
 RUN useradd -m spring
 RUN mkdir -p /data/files && chown spring:spring /data/files
+
 USER spring
 
 COPY --from=builder /app/build/libs/*.jar app.jar
