@@ -6,10 +6,14 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.Arrays;
+import java.util.Map;
 
 @Slf4j
 @Aspect
@@ -29,27 +33,27 @@ public class ControllerLoggingAspect {
 
         String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
         String methodName = joinPoint.getSignature().getName();
+        Object[] args = joinPoint.getArgs();
 
-        log.info(
-                "->   {} {}.{}() called with args: {}",
+        log.info("-> {} {}.{}({}) - User-Agent: {}",
                 request.getMethod(),
                 className,
                 methodName,
+                args.length > 0 ? Arrays.toString(args) : "",
                 request.getHeader("User-Agent")
         );
 
         try {
             Object result = joinPoint.proceed();
-
             long duration = System.currentTimeMillis() - start;
-            ResponseEntity<?> response = (ResponseEntity<?>) result;
 
-            log.info(
-                    "<-   {} {}.{}() — Status: {}, Time: {}",
+            String status = extractStatus(result);
+
+            log.info("<- {} {}.{}() - Status: {}, Time: {} ms",
                     request.getMethod(),
                     className,
                     methodName,
-                    response.getStatusCode(),
+                    status,
                     duration
             );
 
@@ -57,8 +61,7 @@ public class ControllerLoggingAspect {
         } catch (Throwable e) {
             long duration = System.currentTimeMillis() - start;
 
-            log.info(
-                    "<*>   {} {}.{}() — Status: {}, Time: {}",
+            log.error("<!> {} {}.{}() - Error: {}, Time: {} ms",
                     request.getMethod(),
                     className,
                     methodName,
@@ -69,5 +72,26 @@ public class ControllerLoggingAspect {
 
             throw e;
         }
+    }
+
+    private String extractStatus(Object result) {
+        switch (result) {
+            case null -> {
+                return "204 NO_CONTENT";
+            }
+            case ResponseEntity<?> responseEntity -> {
+                HttpStatusCode statusCode = responseEntity.getStatusCode();
+                return statusCode.value() + " " + statusCode;
+            }
+            case byte[] bytes -> {
+                return "200 OK (byte[])";
+            }
+            case Map map -> {
+                return "200 OK (Map)";
+            }
+            default -> { }
+        }
+
+        return "200 OK (" + result.getClass().getSimpleName() + ")";
     }
 }

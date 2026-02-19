@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: App
   datasource:
     url: jdbc:postgresql://postgres:5432/postgres
     username: postgres
@@ -11,19 +9,6 @@ spring:
     show-sql: false
   liquibase:
     enabled: false
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      bootstrap-servers: ${spring.kafka.bootstrap-servers}
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    consumer:
-      group-id: attachment-preview
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
 
 server:
   port: 8080
